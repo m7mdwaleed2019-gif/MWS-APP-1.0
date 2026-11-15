@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>MWS AI Academy | مختبر التعلم الذكي والوكلاء</title>
+  <title>MWS AI Academy | المنصة التعليمية الذكية</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- شريط الإشعارات التفاعلي العلوي -->
+  <!-- شريط الإشعارات العلوي -->
   <div id="toast-notification" class="toast hidden" onclick="handleToastClick()">
     <span id="toast-icon">🔔</span>
     <div class="toast-content">
@@ -18,22 +18,20 @@
     </div>
   </div>
 
-  <!-- الهيدر العلوي الاحترافي -->
+  <!-- الهيدر العلوي المختصر والاحترافي -->
   <header class="app-header">
     <div class="header-top">
       <div>
-        <h1>🧠 مختبر الإتقان المعرفي والذكاء الاصطناعي</h1>
-        <p class="subtitle">تطوير المهارات التحليلية، الشهادات المهنية، وهندسة الوكلاء</p>
+        <h1>🧠 منصة الإتقان المعرفي والذكاء الاصطناعي</h1>
       </div>
       <div id="header-badges" class="badges-row"></div>
     </div>
 
-    <!-- مؤشر الكفاءة المعرفية والإتقان -->
     <div class="market-value-box">
       <div class="mv-labels">
-        <span>المستوى الحالي: <strong id="mastery-level-title">متعلم تطبيقي</strong></span>
-        <span id="mastery-score-label">مؤشر الإتقان المعرفي: <strong>0%</strong></span>
-        <span>الهدف: <strong>إتقان شامل وتطبيق عملي</strong></span>
+        <span>المستوى: <strong id="mastery-level-title">متعلم تطبيقي</strong></span>
+        <span id="mastery-score-label">مؤشر الإتقان: <strong>0%</strong></span>
+        <span id="gemini-header-status" class="status-dot">⚪ Gemini: غير مفحوص</span>
       </div>
       <div class="progress-bar-bg">
         <div id="mastery-progress-fill" class="progress-bar-fill" style="width: 10%;"></div>
@@ -41,142 +39,220 @@
     </div>
   </header>
 
-  <!-- حاوية الصفحات الرئيسية -->
+  <!-- حاوية الصفحات المستقلة -->
   <main class="app-container">
 
-    <!-- ==================== 1. الصفحة الرئيسية (بيئة التعلم والتطبيق) ==================== -->
+    <!-- ==================== 1. صفحة بيئة التعلم (الرئيسية) ==================== -->
     <section id="view-home" class="view-section active">
       
-      <!-- بطاقة جلسة التعلم العميق (Deep Work) -->
+      <!-- قائمة خيارات سريعة -->
+      <div class="quick-actions-grid">
+        <button class="action-tile" onclick="switchView('library')">
+          <span class="tile-icon">📂</span>
+          <strong>مكتبة الملفات</strong>
+          <small>رفع وتصفح الملفات والملاحظات</small>
+        </button>
+        <button class="action-tile" onclick="togglePopupChat()">
+          <span class="tile-icon">💬</span>
+          <strong>محادثة منبثقة</strong>
+          <small>افتح الشات في نافذة عائمة</small>
+        </button>
+        <button class="action-tile" onclick="switchView('settings')">
+          <span class="tile-icon">🩺</span>
+          <strong>فحص المنصة والربط</strong>
+          <small>إعدادات Gemini ووضع المطور</small>
+        </button>
+      </div>
+
+      <!-- بطاقة جلسة التعلم العميق -->
       <div class="card timer-card">
         <div class="card-header">
-          <h2>⏱️ جلسة التعلم العميق (45 دقيقة تركيز صافي)</h2>
-          <button class="btn-outline btn-sm" onclick="toggleRainSound()" id="rain-btn">🌧️ عزل صوتي (مطر): متوقف</button>
+          <h2>⏱️ جلسة التركيز (45 دقيقة)</h2>
+          <button class="btn-outline btn-sm" onclick="toggleRainSound()" id="rain-btn">🌧️ صوت المطر: متوقف</button>
         </div>
         <div class="timer-display" id="timer-display">45:00</div>
         <div class="timer-controls">
-          <button class="btn-primary" onclick="startTimer()" id="start-timer-btn">▶️ بدء جلسة التركيز</button>
+          <button class="btn-primary" onclick="startTimer()">▶️ ابدأ الجلسة</button>
           <button class="btn-secondary" onclick="pauseTimer()">⏸️ إيقاف مؤقت</button>
-          <button class="btn-outline" onclick="resetTimer()">🔄 إعادة ضبط</button>
+          <button class="btn-outline" onclick="resetTimer()">🔄 إعادة</button>
         </div>
       </div>
 
-      <!-- منطقة الأدوات البرمجية للمهندس عبدالملك (Sandbox معزول) -->
-      <div id="abdulmalik-sandbox-container"></div>
-
-      <!-- خارطة المسارات العلمية والمهنية -->
+      <!-- فلتر وقائمة المسارات العلمية -->
       <div class="section-title-row">
-        <h2>📚 المسارات العلمية والتطبيقات المهنية</h2>
-        <span id="overall-progress-text" class="badge-pill">0% مكتمل</span>
+        <h2>📚 المسارات العلمية والمهام</h2>
+        <select id="path-filter-select" style="width:auto;" onchange="renderCertificates()">
+          <option value="all">عرض جميع المسارات</option>
+          <option value="MO-211">Excel Expert (MO-211)</option>
+          <option value="PL-300">Power BI (PL-300)</option>
+          <option value="CMA-P1">CMA Part 1</option>
+        </select>
       </div>
       <div id="certificates-list" class="cards-grid"></div>
 
-      <!-- مختبر التقييم المعرفي الفوري -->
+      <!-- مختبر الأسئلة التطبيقي -->
       <div class="card quiz-card">
         <div class="card-header">
-          <h2>🎯 مختبر الفهم والاستيعاب التطبيقي</h2>
-          <select id="quiz-category-select" onchange="loadQuizQuestion()">
-            <option value="MO-211">تحليل البيانات المتقدم (Excel MO-211)</option>
-            <option value="PL-300">ذكاء الأعمال والنمذجة (Power BI PL-300)</option>
-            <option value="CMA">التحليل المالي والإداري (CMA Part 1)</option>
+          <h2>🎯 بنك الأسئلة السريع</h2>
+          <select id="quiz-category-select" style="width:auto;" onchange="loadQuizQuestion()">
+            <option value="MO-211">Excel (MO-211)</option>
+            <option value="PL-300">Power BI (PL-300)</option>
+            <option value="CMA">CMA Part 1</option>
           </select>
         </div>
         <div id="quiz-box"></div>
       </div>
 
-      <!-- سجل المخرجات والتطبيقات العملية -->
+      <!-- سجل المشاريع التطبيقية -->
       <div class="card">
         <div class="card-header">
-          <h2>📂 سجل النماذج والمشاريع التطبيقية المنجزة</h2>
+          <h2>💼 سجل النماذج والتطبيقات المنجزة</h2>
         </div>
         <div id="projects-list" class="projects-container"></div>
         <div class="add-project-row">
-          <input type="text" id="new-project-input" placeholder="وثّق مهارة أو نموذجاً قمت ببنائه وتطبيقه عملياً..." />
-          <button class="btn-primary" onclick="addNewProject()">+ توثيق الإنجاز</button>
+          <input type="text" id="new-project-input" placeholder="أضف مشروعاً أو مهارة طبقتها..." />
+          <button class="btn-primary" onclick="addNewProject()">+ إضافة</button>
         </div>
       </div>
 
     </section>
 
-    <!-- ==================== 2. صفحة الوكلاء الأذكياء (متصلون تلقائياً بـ Gemini) ==================== -->
+    <!-- ==================== 2. صفحة مكتبة الملفات والملاحظات المستقلة ==================== -->
+    <section id="view-library" class="view-section">
+      
+      <div class="card">
+        <div class="card-header">
+          <h2>📤 رفع وإضافة ملف جديد للمكتبة</h2>
+        </div>
+        <div class="library-upload-grid">
+          <div>
+            <label class="form-label">اختر ملفاً من جهازك (PDF, Excel, صورة، نص):</label>
+            <input type="file" id="library-file-input" class="file-input-box" />
+          </div>
+          <div>
+            <label class="form-label">تصنيف المسار:</label>
+            <select id="library-category-input">
+              <option value="MO-211">Excel Expert (MO-211)</option>
+              <option value="PL-300">Power BI (PL-300)</option>
+              <option value="CMA-P1">CMA Part 1</option>
+              <option value="AI">هندسة الذكاء الاصطناعي</option>
+              <option value="General">ملفات عامة</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:10px;">
+          <input type="text" id="library-custom-title" placeholder="اسم مخصص للملف أو رابط خارجي (اختياري)..." />
+        </div>
+        <div class="form-group">
+          <textarea id="library-initial-notes" rows="2" placeholder="اكتب ملاحظاتك أو ملخصك حول هذا الملف..."></textarea>
+        </div>
+        <button class="btn-primary full-width" onclick="uploadFileToLibrary()">📥 حفظ الملف والملاحظات في المكتبة</button>
+      </div>
+
+      <!-- شريط البحث والفلترة في المكتبة -->
+      <div class="card">
+        <div class="card-header">
+          <h2>📚 تصفح ملفاتي وملاحظاتي</h2>
+          <div class="library-filters">
+            <input type="text" id="library-search-input" placeholder="🔍 ابحث في الملفات أو الملاحظات..." oninput="renderLibrary()" />
+            <select id="library-filter-cat" onchange="renderLibrary()">
+              <option value="all">كل التصنيفات</option>
+              <option value="MO-211">MO-211</option>
+              <option value="PL-300">PL-300</option>
+              <option value="CMA-P1">CMA</option>
+              <option value="AI">الذكاء الاصطناعي</option>
+              <option value="General">عام</option>
+            </select>
+          </div>
+        </div>
+        <div id="library-files-list" class="library-grid"></div>
+      </div>
+
+    </section>
+
+    <!-- ==================== 3. صفحة الدردشة المستقلة (بدون نصوص زائدة) ==================== -->
     <section id="view-chat" class="view-section">
       
-      <!-- مبدل الوكلاء -->
       <div class="agents-switcher">
         <button class="agent-tab active" id="tab-fahad" onclick="switchAgent('fahad')">
-          💡 فهد (المرشد المعرفي)
+          💡 فهد
         </button>
         <button class="agent-tab" id="tab-hazem" onclick="switchAgent('hazem')">
-          📊 حازم (محلل الأداء)
+          📊 حازم
         </button>
         <button class="agent-tab" id="tab-abdulmalik" onclick="switchAgent('abdulmalik')">
-          🛠️ عبدالملك (مهندس النظم)
+          🛠️ عبدالملك
         </button>
       </div>
 
-      <!-- بطاقة تعريف الوكيل ومهاراته التخصصية -->
-      <div id="agent-info-banner" class="agent-banner"></div>
-
-      <!-- شريط المهارات التخصصية للوكيل (Agent Skills) -->
+      <!-- أزرار المهارات السريعة المختصرة -->
       <div id="agent-skills-bar" class="quick-prompts-row"></div>
 
-      <!-- صندوق الحوار التفاعلي -->
+      <!-- صندوق الرسائل -->
       <div id="chat-messages" class="chat-box"></div>
 
-      <!-- شريط الإرسال الصوتي والنصي -->
+      <!-- شريط الإرسال -->
       <div class="chat-input-bar">
-        <button class="btn-icon" onclick="startVoiceInput()" title="تحدث بالمايكروفون">🎙️</button>
-        <input type="text" id="chat-input" placeholder="حاور الوكيل مباشرة (مدعوم تلقائياً بـ Gemini AI)..." onkeypress="if(event.key==='Enter') sendMessage()" />
-        <button class="btn-primary" onclick="sendMessage()">إرسال 🚀</button>
+        <button class="btn-secondary" onclick="startVoiceInput('chat-input')" title="إدخال صوتي">🎙️</button>
+        <input type="text" id="chat-input" placeholder="اكتب سؤالك مباشرة..." onkeypress="if(event.key==='Enter') sendMessage('main')" />
+        <button class="btn-primary" onclick="sendMessage('main')">إرسال 🚀</button>
       </div>
 
     </section>
 
-    <!-- ==================== 3. صفحة التحليلات والإعدادات ==================== -->
+    <!-- ==================== 4. صفحة الإعدادات والمفاتيح ووضع المطور ==================== -->
     <section id="view-settings" class="view-section">
 
-      <!-- تحليلات حازم ورادار الفجوات المعرفية -->
+      <!-- خانة المفاتيح وفحص الربط بـ Gemini -->
       <div class="card">
         <div class="card-header">
-          <h2>📊 تشخيص الأداء ورادار الفجوات المعرفية (بإشراف حازم)</h2>
-          <span id="ai-connection-badge" class="badge-pill">⚡ Gemini AI: متصل تلقائياً</span>
+          <h2>🔑 إعدادات مفاتيح الذكاء الاصطناعي (Gemini API)</h2>
+          <span id="gemini-status-badge" class="badge-pill">الحالة: بانتظار الفحص</span>
         </div>
+        <div class="form-group">
+          <label>مفتاح Gemini API Key (يحفظ في متصفحك أو يعمل مع السيرفر تلقائياً):</label>
+          <div class="input-with-btn">
+            <input type="password" id="api-key-input" placeholder="AIzaSy..." />
+            <button class="btn-outline" onclick="toggleKeyVisibility()">👁️ إظهار</button>
+          </div>
+        </div>
+        <div class="btn-group-row">
+          <button class="btn-primary" onclick="saveAndVerifyGeminiKey()">🔌 حفظ المفتاح وفحص الاتصال بـ Gemini الآن</button>
+        </div>
+        <p id="gemini-verify-result" style="margin-top:10px; font-size:0.85rem;"></p>
+      </div>
+
+      <!-- وضع المطور بضغطة زر + نظام فحص الموقع الشامل -->
+      <div class="card">
+        <div class="card-header">
+          <h2>🛠️ وضع المطور ونظام فحص الموقع (Diagnostics)</h2>
+          <button class="btn-primary btn-sm" id="dev-mode-btn" onclick="toggleDevModeButton()">⚡ تفعيل وضع المطور</button>
+        </div>
+
+        <div id="dev-lab-panel" class="dev-panel hidden">
+          <div class="btn-group-row" style="margin-bottom:12px;">
+            <button class="btn-primary" onclick="runFullSiteDiagnostics()">🩺 تشغيل الفحص الشامل للموقع الآن</button>
+            <button class="btn-secondary" onclick="triggerTestNotification('fahad')">🔔 تجربة إشعار فهد</button>
+            <button class="btn-secondary" onclick="addStreakManually()">🔥 +1 يوم استمرارية</button>
+            <button class="btn-danger" onclick="clearChatHistory()">🧹 مسح سجل المحادثات</button>
+          </div>
+          <!-- شاشة نتائج الفحص البرمجي -->
+          <div id="diagnostics-output" class="diagnostics-box">
+            اضغط على "تشغيل الفحص الشامل للموقع" لفحص سلامة الصفحات، الذاكرة، المكتبة، وربط Gemini.
+          </div>
+        </div>
+      </div>
+
+      <!-- خلاصة حازم والنسخ الاحتياطي -->
+      <div class="card">
+        <h2>📊 ملخص الأداء وإدارة البيانات</h2>
         <div id="hazem-evaluation-summary" class="eval-box"></div>
         <div id="weakness-radar-box" class="radar-box"></div>
-        <button class="btn-primary full-width" onclick="generateSmartDailyReport()">📋 توليد ونسخ التقرير التحليلي الشامل</button>
-      </div>
-
-      <!-- مدير أدوات المهندس عبدالملك -->
-      <div class="card">
-        <div class="card-header">
-          <h2>🛠️ إدارة الأدوات البرمجية المضافة (بإشراف عبدالملك)</h2>
-          <button class="btn-danger btn-sm" onclick="clearAllAbdulmalikMods()">🗑️ إزالة كافة الأدوات</button>
-        </div>
-        <p class="hint-text">جميع الأدوات هنا معزولة برمجياً (Sandboxed)؛ يمكنك حذف أي أداة بضغطة زر دون التأثير على استقرار المنصة.</p>
-        <div id="abdulmalik-mods-list"></div>
-      </div>
-
-      <!-- النسخ الاحتياطي ووضع المطور -->
-      <div class="card">
-        <h2>⚙️ إدارة قاعدة البيانات ومختبر المطور</h2>
-        <div class="btn-group-row">
-          <button class="btn-outline" onclick="exportBackup()">📥 تصدير قاعدة البيانات (JSON)</button>
-          <button class="btn-outline" onclick="document.getElementById('import-file').click()">📤 استيراد البيانات</button>
-          <input type="file" id="import-file" style="display:none" accept=".json" onchange="importBackup(event)" />
-        </div>
         <hr style="border-color:#334155; margin:14px 0;" />
-        <div class="dev-mode-toggle">
-          <label>
-            <input type="checkbox" id="dev-mode-checkbox" onchange="toggleDevMode()" />
-            تفعيل "وضع المطور" (محاكاة الأحداث والاختبار البرمجي)
-          </label>
-        </div>
-        <div id="dev-lab-panel" class="dev-panel hidden" style="margin-top:10px;">
-          <div class="btn-group-row">
-            <button class="btn-sm btn-secondary" onclick="triggerTestNotification('fahad')">محاكاة تنبيه من فهد</button>
-            <button class="btn-sm btn-secondary" onclick="triggerTestNotification('hazem')">محاكاة تقرير من حازم</button>
-            <button class="btn-sm btn-secondary" onclick="addStreakManually()">+1 يوم استمرارية 🔥</button>
-          </div>
+        <div class="btn-group-row">
+          <button class="btn-outline" onclick="exportBackup()">📥 تصدير نسخة احتياطية شاملة (JSON)</button>
+          <button class="btn-outline" onclick="document.getElementById('import-file').click()">📤 استعادة نسخة</button>
+          <input type="file" id="import-file" style="display:none" accept=".json" onchange="importBackup(event)" />
         </div>
       </div>
 
@@ -184,19 +260,44 @@
 
   </main>
 
-  <!-- شريط التنقل السفلي -->
+  <!-- ==================== نافذة المحادثة المنبثقة العائمة (Popup Chat) ==================== -->
+  <button class="floating-chat-btn" onclick="togglePopupChat()" title="فتح المحادثة المنبثقة">
+    💬
+  </button>
+
+  <div id="popup-chat-modal" class="popup-chat hidden">
+    <div class="popup-chat-header">
+      <div class="popup-agents-mini">
+        <button class="mini-tab active" id="pop-tab-fahad" onclick="switchAgent('fahad')">💡 فهد</button>
+        <button class="mini-tab" id="pop-tab-hazem" onclick="switchAgent('hazem')">📊 حازم</button>
+        <button class="mini-tab" id="pop-tab-abdulmalik" onclick="switchAgent('abdulmalik')">🛠️ عبدالملك</button>
+      </div>
+      <button class="btn-close-popup" onclick="togglePopupChat()">✖</button>
+    </div>
+    <div id="popup-chat-messages" class="popup-chat-body"></div>
+    <div class="popup-chat-footer">
+      <input type="text" id="popup-chat-input" placeholder="اكتب رسالتك هنا..." onkeypress="if(event.key==='Enter') sendMessage('popup')" />
+      <button class="btn-primary btn-sm" onclick="sendMessage('popup')">إرسال</button>
+    </div>
+  </div>
+
+  <!-- شريط التنقل السفلي (4 صفحات مستقلة) -->
   <nav class="bottom-nav">
     <button class="nav-item active" id="nav-home" onclick="switchView('home')">
       <span class="nav-icon">🏛️</span>
-      <span class="nav-label">بيئة التعلم</span>
+      <span class="nav-label">الرئيسية</span>
+    </button>
+    <button class="nav-item" id="nav-library" onclick="switchView('library')">
+      <span class="nav-icon">📚</span>
+      <span class="nav-label">المكتبة والملفات</span>
     </button>
     <button class="nav-item" id="nav-chat" onclick="switchView('chat')">
-      <span class="nav-icon">🧠</span>
-      <span class="nav-label">الوكلاء الأذكياء</span>
+      <span class="nav-icon">💬</span>
+      <span class="nav-label">المحادثة</span>
     </button>
     <button class="nav-item" id="nav-settings" onclick="switchView('settings')">
       <span class="nav-icon">⚙️</span>
-      <span class="nav-label">التحليلات والإعدادات</span>
+      <span class="nav-label">الإعدادات والمطور</span>
     </button>
   </nav>
 
