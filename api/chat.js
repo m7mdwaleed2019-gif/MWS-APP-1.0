@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     'gemini-3.8-flash',
     'gemini-3.8-flash-lite',
     'gemini-3.8-pro',
-    'gemini-2.5-flash'
+    
   ].filter(Boolean);
 
   const uniqueModels = [...new Set(candidateModels)];
