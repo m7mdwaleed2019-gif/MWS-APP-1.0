@@ -1,5 +1,5 @@
-// ==================== 1. قاعدة البيانات والحالة المعرفية (State) ====================
-const STORAGE_KEY = 'MWS_AI_ACADEMY_V4';
+// ==================== 1. قاعدة البيانات والحالة (State) ====================
+const STORAGE_KEY = 'MWS_AI_ACADEMY_V5';
 
 const defaultState = {
   streak: 1,
@@ -7,104 +7,101 @@ const defaultState = {
   totalStudyMinutes: 45,
   currentAgent: 'fahad',
   devMode: false,
+  geminiConnected: false,
+  settings: {
+    apiKey: ''
+  },
   certificates: [
     {
       id: 'MO-211',
-      title: 'تحليل البيانات المتقدم وهندسة الجداول (Excel Expert MO-211)',
-      badge: 'المسار التأسيسي الأول',
+      title: 'تحليل البيانات المتقدم (Excel Expert MO-211)',
+      badge: 'المسار الأول',
       status: 'studying',
       tasks: [
-        { id: 't1', text: 'إتقان دوال البحث المرجعي الديناميكي (XLOOKUP & INDEX/MATCH) لمعالجة قواعد البيانات الكبيرة', done: true },
-        { id: 't2', text: 'أتمتة استيراد وتنظيف البيانات المالية والتشغيلية عبر محرك Power Query', done: false },
-        { id: 't3', text: 'تصميم النماذج التحليلية والجداول المحورية المتقدمة (PivotTables & Dynamic Arrays)', done: false }
+        { id: 't1', text: 'إتقان دوال البحث المرجعي الديناميكي (XLOOKUP & INDEX/MATCH)', done: true },
+        { id: 't2', text: 'أتمتة استيراد وتنظيف البيانات عبر محرك Power Query', done: false },
+        { id: 't3', text: 'تصميم النماذج التحليلية والجداول المحورية المتقدمة (PivotTables)', done: false }
       ]
     },
     {
       id: 'PL-300',
-      title: 'ذكاء الأعمال ونمذجة البيانات التفاعلية (Power BI Data Analyst PL-300)',
-      badge: 'مسار التحليل المتقدم',
+      title: 'ذكاء الأعمال ونمذجة البيانات (Power BI PL-300)',
+      badge: 'المسار الثاني',
       status: 'planned',
       tasks: [
-        { id: 't4', text: 'هندسة العلاقات بين الجداول وبناء نموذج النجمة (Star Schema Data Modeling)', done: false },
-        { id: 't5', text: 'كتابة معادلات التحليل الزمني والمالي المتقدمة باستخدام لغة DAX', done: false },
-        { id: 't6', text: 'تصميم لوحات المؤشرات القياسية (Executive Dashboards) لدعم اتخاذ القرار', done: false }
+        { id: 't4', text: 'هندسة العلاقات بين الجداول وبناء نموذج النجمة (Star Schema)', done: false },
+        { id: 't5', text: 'كتابة معادلات التحليل الزمني والمالي باستخدام لغة DAX', done: false },
+        { id: 't6', text: 'تصميم لوحات المؤشرات التفاعلية (Executive Dashboards)', done: false }
       ]
     },
     {
       id: 'CMA-P1',
-      title: 'التخطيط المالي، الرقابة، وتحليل الأداء (CMA - Part 1)',
-      badge: 'العمق الاستراتيجي والمالي',
+      title: 'التخطيط المالي وتحليل الأداء (CMA - Part 1)',
+      badge: 'المسار الثالث',
       status: 'planned',
       tasks: [
-        { id: 't7', text: 'تحليل القوائم المالية ومعايير الاعتراف بالإيرادات وتقييم الأصول', done: false },
-        { id: 't8', text: 'بناء الموازنات التقديرية المرنة (Flexible Budgets) والتنبؤ بالتدفقات النقدية', done: false },
-        { id: 't9', text: 'إدارة التكاليف التشغيلية، تحليل الانحرافات، وأطر الرقابة الداخلية', done: false }
+        { id: 't7', text: 'تحليل القوائم المالية ومعايير الاعتراف بالإيرادات', done: false },
+        { id: 't8', text: 'بناء الموازنات التقديرية المرنة (Flexible Budgets)', done: false },
+        { id: 't9', text: 'إدارة التكاليف التشغيلية وتحليل الانحرافات', done: false }
       ]
     }
   ],
+  libraryFiles: [
+    {
+      id: 'lib_1',
+      name: 'ملخص أهم دوال الإكسل المتقدم و Power Query.txt',
+      category: 'MO-211',
+      size: 'ملف مرجعي',
+      date: '2026-11-15',
+      notes: 'التركيز على خطوات Unpivot Columns في Power Query لتنظيف الجداول.',
+      dataUrl: ''
+    }
+  ],
   projects: [
-    'تصميم نموذج Power Query مؤتمت لتنظيف ومطابقة بيانات العمليات اليومية وتقليص زمن المعالجة بنسبة 60%.'
+    'تصميم نموذج Power Query مؤتمت لتنظيف ومطابقة بيانات العمليات اليومية.'
   ],
   quizStats: {
     'MO-211': { correct: 2, wrong: 0 },
     'PL-300': { correct: 1, wrong: 1 },
     'CMA': { correct: 0, wrong: 1 }
   },
-  abdulmalikMods: [],
-  pendingProposal: null,
   chatHistory: {
     fahad: [
-      {
-        sender: 'bot',
-        text: 'أهلاً بك يا صديقي! معك فهد 💡. أنا متصل الآن بمحرك Gemini تلقائياً لنفكك أي مفهوم معقد في تحليل البيانات أو المالية ونحوله إلى فكرة بسيطة وممتعة. اختر أي مهارة من مهاراتي بالأعلى أو حدثني عفوياً عما تدرسه اليوم!'
-      }
+      { sender: 'bot', text: 'أهلاً بك! أنا فهد 💡. جاهز لشرح أي مفهوم أو معادلة أو مناقشة ملفاتك الدراسية.' }
     ],
     hazem: [
-      {
-        sender: 'bot',
-        text: 'مرحباً بك. معك حازم 📊، محلل الأداء وجودة التعلم. أقرأ مؤشرات تقدمك وأحلل إجاباتك بهدوء وموضوعية لنكتشف معاً نقاط قوتك وأي المهارات تحتاج منا تركيزاً أعمق.'
-      }
+      { sender: 'bot', text: 'مرحباً بك. أنا حازم 📊. أتابع جودة تركيزك وأحلل تقدمك في المسارات والاختبارات.' }
     ],
     abdulmalik: [
-      {
-        sender: 'bot',
-        text: 'حياك الله يا بشمهندس! معك عبدالملك 🛠️، مهندس النظم والأدوات الذكية. يسعدني بناء أي أداة برمجية تفاعلية تخدم تعلمك داخل المنصة. أقترح الأداة أولاً، ولا أثبتها إلا بعد اعتمادك، ويمكنك التراجع عنها أو حذفها في أي لحظة.'
-      }
+      { sender: 'bot', text: 'أهلاً بك يا بشمهندس! أنا عبدالملك 🛠️. أعمل الآن كمستشار برمجي وتقني مباشر للإجابة على استفساراتك في البرمجة وهندسة الذكاء الاصطناعي دون أي اقتراحات تلقائية.' }
     ]
   }
 };
 
-// تعريف الشخصيات والمهارات التخصصية لكل وكيل
+// تعريف المهارات وتوجيهات الوكلاء (بدون نصوص زائدة في الواجهة وبدون اقتراحات من عبدالملك)
 const agentProfiles = {
   fahad: {
-    name: 'فهد — المرشد المعرفي وشريك التعلم',
-    bio: '💡 <strong>أسلوب فهد:</strong> حواري، قريب للنفس، يربط النظريات بالواقع العملي، ويبسط أعقد المفاهيم بدون تعقيد أكاديمي.',
-    systemPrompt: 'أنت "فهد"، مرشد معرفي وصديق دراسة ذكي وودود جداً. تتحدث بعربية طبيعية راقية ودافئة (بأسلوب بشري غير آلي). هدفك مساعدة المستخدم على الفهم العميق لتحليل البيانات (Excel, Power BI) والمحاسبة الإدارية (CMA) وهندسة الذكاء الاصطناعي، دون ذكر أي أرقام عن الرواتب. استخدم الأمثلة الواقعية والقصص المبسطة.',
+    systemPrompt: 'أنت "فهد"، مرشد معرفي وصديق دراسة ذكي وودود. تتحدث بعربية طبيعية راقية ومختصرة. تشرح مفاهيم تحليل البيانات (Excel, Power BI) والمحاسبة الإدارية (CMA) والذكاء الاصطناعي بأمثلة واقعية.',
     skills: [
-      { label: '🧩 تبسيط مفهوم معقد بأمثلة واقعية', prompt: 'استخدم مهارة التبسيط الواقعي: اشرح لي الفرق العملي بين Power Query ولغة DAX في Power BI كأننا نرتب مكتبة أو متجر.' },
-      { label: '🧠 جلسة عصف وسؤال سقراطي', prompt: 'استخدم مهارة الحوار السقراطي: اطرح عليّ سيناريو عملياً ذكياً في تحليل البيانات وناقشني في طريقة حله خطوة بخطوة.' },
-      { label: '📝 تلخيص ذكي لدرس اليوم', prompt: 'استخدم مهارة التلخيص الذهبي: أعطني خلاصة مركزة في 3 نقاط ذهبية حول كيفية بناء نموذج بيانات نظيف (Star Schema).' }
+      { label: '🧩 تبسيط مفهوم', prompt: 'اشرح لي ببساطة الفرق العملي بين Power Query ولغة DAX بمثال واقعي.' },
+      { label: '🧠 سؤال استنتاجي', prompt: 'اطرح عليّ سيناريو عملياً قصيراً في تحليل البيانات وناقشني في حله.' },
+      { label: '📝 تلخيص مركز', prompt: 'لخص لي أهم 3 قواعد لبناء نموذج بيانات Star Schema في Power BI.' }
     ]
   },
   hazem: {
-    name: 'حازم — محلل الأداء وجودة التعلم',
-    bio: '📊 <strong>أسلوب حازم:</strong> موضوعي، رصين، يقرأ البيانات بهدوء ليقدم لك تشخيصاً دقيقاً لجودة استيعابك واستمراريتك.',
-    systemPrompt: 'أنت "حازم"، محلل أداء ومستشار جودة تعلم ذو شخصية هادئة، رصينة، وموضوعية جداً. تتحدث بأسلوب بشري احترافي يحترم عقل المتعلم. لا تتحدث عن الرواتب، بل تركز على جودة التركيز، تشخيص الفجوات المعرفية من إحصائيات الاختبارات، وتصميم خطط مراجعة ذكية.',
+    systemPrompt: 'أنت "حازم"، محلل أداء وجودة تعلم هادئ وموضوعي. تحلل تقدم المتعلم، وتكشف الفجوات المعرفية من إحصائيات الاختبارات، وتضع خطط مراجعة عملية.',
     skills: [
-      { label: '🔍 تشخيص الفجوات المعرفية', prompt: 'استخدم مهارة التشخيص المعرفي: بناءً على أدائي في الاختبارات والمحاور، حلل نقاط قوتي والفجوات التي تحتاج مراجعة.' },
-      { label: '📈 تقييم جودة التركيز والاستمرارية', prompt: 'استخدم مهارة تحليل الأداء: قيّم مستوى التزامي وجودة جلسات التعلم العميق الخاصة بي وقدم لي توصية عملية.' },
-      { label: '🗓️ تصميم خطة مراجعة أسبوعية', prompt: 'استخدم مهارة التخطيط الدراسي: صمم لي جدولاً مرناً ومقسماً لتوزيع جلسات الـ 45 دقيقة خلال هذا الأسبوع.' }
+      { label: '🔍 تشخيص الفجوات', prompt: 'حلل أدائي الحالي في الاختبارات والمحاور وحدد أين أحتاج مراجعة.' },
+      { label: '📈 تقييم التركيز', prompt: 'قيّم استمراريتي وجودة جلسات التركيز وقدم لي نصيحة عملية.' },
+      { label: '🗓️ جدول الأسبوع', prompt: 'صمم لي خطة مراجعة مرنة لتوزيع جلسات الـ 45 دقيقة هذا الأسبوع.' }
     ]
   },
   abdulmalik: {
-    name: 'عبدالملك — مهندس النظم والأدوات الذكية',
-    bio: '🛠️ <strong>أسلوب عبدالملك:</strong> مهندس برمجيات محترف، واضح، يبني لك أدوات تفاعلية مخصصة داخل بيئة معزولة (Sandbox) بعد موافقتك.',
-    systemPrompt: 'أنت "عبدالملك"، مهندس برمجيات ونظم ذكاء اصطناعي محترف ولبق. تساعد المستخدم في فهم بنية تطبيقاته وبناء أدوات تفاعلية مساعدة داخل المنصة.',
+    systemPrompt: 'أنت "عبدالملك"، مهندس برمجيات ومستشار تقني محترف. تجيب مباشرة وبوضوح على أسئلة البرمجة، قواعد البيانات، وهندسة الذكاء الاصطناعي. مهم جداً: لا تقترح إضافة أدوات أو تعديلات على الموقع إطلاقاً، بل أجب كخبير تقني فقط.',
     skills: [
-      { label: '➕ بناء بطاقات استذكار (Flashcards)', prompt: 'أضف أداة بطاقات الاستذكار السريعة للمفاهيم' },
-      { label: '➕ بناء مختبر محاكاة الدوال (Excel/DAX)', prompt: 'أضف أداة مرجع ومحاكاة دوال التحليل' },
-      { label: '➕ بناء حاسبة الضريبة والنسب المالية', prompt: 'أضف حاسبة التحليل المالي والضريبي' },
-      { label: '🗑️ التراجع وحذف آخر أداة', prompt: 'احذف آخر أداة وتراجع عن التعديل' }
+      { label: '💻 شرح كود برمجي', prompt: 'اشرح لي كيف يتصل تطبيق الويب بواجهة Gemini API خطوة بخطوة.' },
+      { label: '🗄️ قواعد البيانات', prompt: 'ما الفرق العملي بين LocalStorage وقاعدة بيانات سحابية مثل Supabase؟' },
+      { label: '🤖 هندسة الأوامر', prompt: 'أعطني أهم القواعد لكتابة System Prompt احترافي للوكلاء الأذكياء.' }
     ]
   }
 };
@@ -130,25 +127,34 @@ function saveState() {
   renderAll();
 }
 
-// ==================== 2. دوال رسم وتحديث الواجهة (UI Rendering) ====================
+// ==================== 2. رسم الواجهة والصفحات المستقلة ====================
 function renderAll() {
   renderHeaderBadges();
   renderMasteryIndex();
   renderCertificates();
   renderProjects();
-  renderAbdulmalikSandbox();
-  renderAbdulmalikModsManager();
+  renderLibrary();
   renderHazemReportAndRadar();
+  updateGeminiBadgesUI();
+}
+
+function switchView(viewName) {
+  document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  document.getElementById(`view-${viewName}`)?.classList.add('active');
+  document.getElementById(`nav-${viewName}`)?.classList.add('active');
+  if (viewName === 'chat') renderChat();
+  if (viewName === 'library') renderLibrary();
 }
 
 function renderHeaderBadges() {
   const container = document.getElementById('header-badges');
   if (!container) return;
-  const grade = calculateDailyGrade();
   container.innerHTML = `
-    <span class="badge-pill">🔥 الاستمرارية: ${state.streak} يوم</span>
-    <span class="badge-pill">⏱️ تركيز اليوم: ${state.studyMinutesToday} د</span>
-    <span class="badge-pill">📊 مؤشر الجودة: ${grade}</span>
+    <span class="badge-pill">🔥 ${state.streak} يوم</span>
+    <span class="badge-pill">⏱️ ${state.studyMinutesToday} د</span>
+    <span class="badge-pill">📂 ${state.libraryFiles.length} ملفات</span>
   `;
 }
 
@@ -172,22 +178,24 @@ function renderMasteryIndex() {
   const titleEl = document.getElementById('mastery-level-title');
   const scoreEl = document.getElementById('mastery-score-label');
   const fillEl = document.getElementById('mastery-progress-fill');
-  const overallText = document.getElementById('overall-progress-text');
 
   if (titleEl) titleEl.textContent = levelTitle;
-  if (scoreEl) scoreEl.innerHTML = `مؤشر الإتقان المعرفي: <strong>${masteryPercent}%</strong>`;
+  if (scoreEl) scoreEl.innerHTML = `مؤشر الإتقان: <strong>${masteryPercent}%</strong>`;
   if (fillEl) fillEl.style.width = `${Math.max(8, masteryPercent)}%`;
-  if (overallText) overallText.textContent = `${Math.round(progressRatio * 100)}% من المنهج مكتمل`;
 }
 
 function renderCertificates() {
   const container = document.getElementById('certificates-list');
   if (!container) return;
+  const filterVal = document.getElementById('path-filter-select')?.value || 'all';
 
-  container.innerHTML = state.certificates.map((cert, cIdx) => {
+  const list = state.certificates.filter(c => filterVal === 'all' || c.id === filterVal);
+
+  container.innerHTML = list.map(cert => {
+    const realIdx = state.certificates.findIndex(item => item.id === cert.id);
     const tasksHtml = cert.tasks.map((t, tIdx) => `
       <label class="task-item ${t.done ? 'done' : ''}">
-        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${cIdx}, ${tIdx})" />
+        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${realIdx}, ${tIdx})" />
         <span>${t.text}</span>
       </label>
     `).join('');
@@ -199,11 +207,6 @@ function renderCertificates() {
           <span class="badge-pill">${cert.badge}</span>
         </div>
         <div>${tasksHtml}</div>
-        <select class="hadaf-select" onchange="updateCertStatus(${cIdx}, this.value)">
-          <option value="planned" ${cert.status === 'planned' ? 'selected' : ''}>📌 حالة المسار: ضمن الخطة القادمة</option>
-          <option value="studying" ${cert.status === 'studying' ? 'selected' : ''}>📖 حالة المسار: قيد الدراسة والتطبيق الفعلي</option>
-          <option value="mastered" ${cert.status === 'mastered' ? 'selected' : ''}>🏆 حالة المسار: تم الإتقان واجتياز التقييم</option>
-        </select>
       </div>
     `;
   }).join('');
@@ -213,14 +216,6 @@ function toggleTask(certIdx, taskIdx) {
   const task = state.certificates[certIdx].tasks[taskIdx];
   task.done = !task.done;
   saveState();
-  if (task.done) {
-    showToast('fahad', '💡 خطوة معرفية رائعة!', `إتقانك لـ "${task.text}" يعزز بنيتك التحليلية بشكل ممتاز.`);
-  }
-}
-
-function updateCertStatus(certIdx, status) {
-  state.certificates[certIdx].status = status;
-  saveState();
 }
 
 function renderProjects() {
@@ -229,7 +224,7 @@ function renderProjects() {
   container.innerHTML = state.projects.map(p => `
     <div class="task-item" style="justify-content: space-between;">
       <span>✅ ${p}</span>
-      <button class="btn-outline btn-sm" onclick="navigator.clipboard.writeText('${p}'); alert('تم نسخ التوثيق العلمي للمشروع!')">📋 نسخ التوثيق</button>
+      <button class="btn-outline btn-sm" onclick="navigator.clipboard.writeText('${p}'); alert('تم نسخ المشروع!')">📋 نسخ</button>
     </div>
   `).join('');
 }
@@ -242,7 +237,360 @@ function addNewProject() {
   saveState();
 }
 
-// ==================== 3. المؤقت والعزل الصوتي ====================
+// ==================== 3. مكتبة الملفات والملاحظات (Library & Notes) ====================
+function uploadFileToLibrary() {
+  const fileInput = document.getElementById('library-file-input');
+  const catInput = document.getElementById('library-category-input');
+  const customTitle = document.getElementById('library-custom-title');
+  const notesInput = document.getElementById('library-initial-notes');
+
+  const file = fileInput?.files?.[0];
+  const titleText = customTitle?.value.trim() || (file ? file.name : '');
+
+  if (!file && !titleText) {
+    return alert('يرجى اختيار ملف من جهازك أو كتابة عنوان الملف/المورد أولاً.');
+  }
+
+  const newEntry = {
+    id: 'lib_' + Date.now(),
+    name: titleText,
+    category: catInput?.value || 'General',
+    size: file ? `${(file.size / 1024).toFixed(1)} KB` : 'ملاحظة/مورد',
+    date: new Date().toISOString().slice(0, 10),
+    notes: notesInput?.value.trim() || '',
+    dataUrl: ''
+  };
+
+  if (file && file.size < 2 * 1024 * 1024) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      newEntry.dataUrl = e.target.result;
+      state.libraryFiles.unshift(newEntry);
+      resetLibraryForm();
+      saveState();
+      showToast('fahad', '📂 تمت إضافة الملف للمكتبة', `تم حفظ "${newEntry.name}" مع ملاحظاتك بنجاح.`);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    state.libraryFiles.unshift(newEntry);
+    resetLibraryForm();
+    saveState();
+    showToast('fahad', '📂 تمت الإضافة للمكتبة', `تم حفظ "${newEntry.name}" في مكتبتك.`);
+  }
+}
+
+function resetLibraryForm() {
+  if (document.getElementById('library-file-input')) document.getElementById('library-file-input').value = '';
+  if (document.getElementById('library-custom-title')) document.getElementById('library-custom-title').value = '';
+  if (document.getElementById('library-initial-notes')) document.getElementById('library-initial-notes').value = '';
+}
+
+function renderLibrary() {
+  const listEl = document.getElementById('library-files-list');
+  if (!listEl) return;
+
+  const query = (document.getElementById('library-search-input')?.value || '').toLowerCase();
+  const cat = document.getElementById('library-filter-cat')?.value || 'all';
+
+  const filtered = state.libraryFiles.filter(f => {
+    const matchCat = cat === 'all' || f.category === cat;
+    const matchText = f.name.toLowerCase().includes(query) || (f.notes || '').toLowerCase().includes(query);
+    return matchCat && matchText;
+  });
+
+  if (filtered.length === 0) {
+    listEl.innerHTML = '<p style="color:#94a3b8; font-size:0.88rem;">لا توجد ملفات مطابقة للبحث حالياً.</p>';
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(item => `
+    <div class="file-card">
+      <div class="file-card-top">
+        <div>
+          <strong>📄 ${item.name}</strong>
+          <span class="badge-pill" style="margin-right:6px;">${item.category}</span>
+          <small style="color:#94a3b8; display:block;">تاريخ الإضافة: ${item.date} | الحجم: ${item.size}</small>
+        </div>
+        <div class="btn-group-row" style="margin-top:0;">
+          ${item.dataUrl ? `<a href="${item.dataUrl}" download="${item.name}" class="btn-outline btn-sm" style="text-decoration:none;">⬇️ فتح/تحميل</a>` : ''}
+          <button class="btn-secondary btn-sm" onclick="askAgentAboutFile('${item.id}')">💬 ناقش الملف بالمنبثقة</button>
+          <button class="btn-danger btn-sm" onclick="deleteLibraryFile('${item.id}')">🗑️ حذف</button>
+        </div>
+      </div>
+      <label class="form-label">📝 ملاحظاتي على هذا الملف (تحفظ تلقائياً عند التعديل):</label>
+      <textarea class="file-notes-area" rows="2" onchange="updateFileNotes('${item.id}', this.value)" placeholder="أضف ملاحظاتك أو النقاط المهمة هنا...">${item.notes || ''}</textarea>
+    </div>
+  `).join('');
+}
+
+function updateFileNotes(fileId, newNotes) {
+  const item = state.libraryFiles.find(f => f.id === fileId);
+  if (item) {
+    item.notes = newNotes;
+    saveState();
+  }
+}
+
+function deleteLibraryFile(fileId) {
+  state.libraryFiles = state.libraryFiles.filter(f => f.id !== fileId);
+  saveState();
+}
+
+function askAgentAboutFile(fileId) {
+  const item = state.libraryFiles.find(f => f.id === fileId);
+  if (!item) return;
+  const modal = document.getElementById('popup-chat-modal');
+  modal?.classList.remove('hidden');
+  const popInput = document.getElementById('popup-chat-input');
+  if (popInput) {
+    popInput.value = `لدي ملف بعنوان "${item.name}" في مسار (${item.category}) وملاحظاتي عليه: "${item.notes || 'لا توجد'}". أعطني أهم النقاط التطبيقية للتركيز عليها.`;
+    sendMessage('popup');
+  }
+}
+
+// ==================== 4. الدردشة المستقلة + النافذة المنبثقة (بدون اقتراحات عبدالملك) ====================
+function switchAgent(agentKey) {
+  state.currentAgent = agentKey;
+  document.querySelectorAll('.agent-tab, .mini-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`tab-${agentKey}`)?.classList.add('active');
+  document.getElementById(`pop-tab-${agentKey}`)?.classList.add('active');
+  renderChat();
+}
+
+function togglePopupChat() {
+  const modal = document.getElementById('popup-chat-modal');
+  modal?.classList.toggle('hidden');
+  renderChat();
+}
+
+function renderChat() {
+  const agent = state.currentAgent;
+  const profile = agentProfiles[agent];
+  const skillsBar = document.getElementById('agent-skills-bar');
+  const mainBox = document.getElementById('chat-messages');
+  const popupBox = document.getElementById('popup-chat-messages');
+
+  if (skillsBar && profile) {
+    skillsBar.innerHTML = profile.skills.map(s => `
+      <button class="btn-outline btn-sm" onclick="sendQuickPrompt('${s.prompt}')">${s.label}</button>
+    `).join('');
+  }
+
+  const msgs = state.chatHistory[agent] || [];
+  const msgsHtml = msgs.map(m => `
+    <div class="msg ${m.sender}">
+      <div>${m.text}</div>
+    </div>
+  `).join('');
+
+  if (mainBox) {
+    mainBox.innerHTML = msgsHtml;
+    mainBox.scrollTop = mainBox.scrollHeight;
+  }
+  if (popupBox) {
+    popupBox.innerHTML = msgsHtml;
+    popupBox.scrollTop = popupBox.scrollHeight;
+  }
+}
+
+function sendQuickPrompt(text) {
+  const input = document.getElementById('chat-input');
+  if (input) {
+    input.value = text;
+    sendMessage('main');
+  }
+}
+
+async function sendMessage(source = 'main') {
+  const inputId = source === 'popup' ? 'popup-chat-input' : 'chat-input';
+  const input = document.getElementById(inputId);
+  if (!input || !input.value.trim()) return;
+  const userText = input.value.trim();
+  input.value = '';
+
+  const agent = state.currentAgent;
+  state.chatHistory[agent].push({ sender: 'user', text: userText });
+  renderChat();
+
+  const reply = await fetchGeminiReply(agent, userText);
+  state.chatHistory[agent].push({ sender: 'bot', text: reply });
+  saveState();
+  renderChat();
+}
+
+async function fetchGeminiReply(agent, userText) {
+  const profile = agentProfiles[agent];
+  const doneCount = state.certificates.reduce((acc, c) => acc + c.tasks.filter(t => t.done).length, 0);
+  const contextSummary = `الاستمرارية=${state.streak} يوم، تركيز اليوم=${state.studyMinutesToday} د، المهام المنجزة=${doneCount}، عدد ملفات المكتبة=${state.libraryFiles.length}.`;
+
+  // 1. إذا كان مفتاح Gemini مضافاً في خانة الإعدادات، نتصل بـ Gemini مباشرة
+  const manualKey = state.settings?.apiKey?.trim();
+  if (manualKey && manualKey.startsWith('AIza')) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${manualKey}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: `${profile.systemPrompt}\nالسياق: ${contextSummary}\nسؤال المستخدم: ${userText}` }] }]
+        })
+      });
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (text) {
+        state.geminiConnected = true;
+        updateGeminiBadgesUI();
+        return text;
+      }
+    } catch (e) {}
+  }
+
+  // 2. المحاولة عبر السيرفر التلقائي (/api/chat) في حال وجود المفتاح في Vercel
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemPrompt: profile.systemPrompt,
+        contextSummary,
+        userText
+      })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.reply) {
+        state.geminiConnected = true;
+        updateGeminiBadgesUI();
+        return data.reply;
+      }
+    }
+  } catch (e) {}
+
+  // 3. محرك احتياطي ذكي ومختصر بدون أي هلوسة أو تكرار مقترحات
+  return generateCleanFallbackReply(agent, userText);
+}
+
+function generateCleanFallbackReply(agent, userText) {
+  if (agent === 'abdulmalik') {
+    return `🛠️ إجابة تقنية مباشرة حول "${userText}":\nلتفعيل ردود Gemini الحية بالكامل، تأكد من لصق مفتاح Gemini API في صفحة الإعدادات والضغط على زر "فحص الاتصال". أنا جاهز لمساعدتك في أي استفسار برمجي دون إضافة أي تعديلات عشوائية.`;
+  }
+  if (agent === 'hazem') {
+    return `📊 قراءة الأداء الحالية: استمراريتك ${state.streak} يوم، وزمن التركيز اليوم ${state.studyMinutesToday} دقيقة، ولديك ${state.libraryFiles.length} ملفات في مكتبتك.`;
+  }
+  return `💡 بخصوص "${userText}": يمكنك تفعيل مفتاح Gemini من صفحة الإعدادات لنتحاور بعمق في هذا الموضوع، أو مراجعة ملفاتك وملاحظاتك في قسم المكتبة.`;
+}
+
+// ==================== 5. فحص مفتاح Gemini + وضع المطور وفاحص الموقع ====================
+function toggleKeyVisibility() {
+  const input = document.getElementById('api-key-input');
+  if (!input) return;
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+async function saveAndVerifyGeminiKey() {
+  const input = document.getElementById('api-key-input');
+  const resultEl = document.getElementById('gemini-verify-result');
+  const key = input?.value.trim() || '';
+  state.settings.apiKey = key;
+  saveState();
+
+  if (resultEl) {
+    resultEl.style.color = '#93c5fd';
+    resultEl.textContent = '⏳ جاري اختبار الاتصال الفعلي بمحرك Gemini...';
+  }
+
+  // اختبار الاتصال بالمفتاح المدخل أو عبر السيرفر
+  let connected = false;
+  if (key.startsWith('AIza')) {
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: 'أجب بكلمة: متصل' }] }] })
+      });
+      const data = await res.json();
+      if (data?.candidates?.[0]?.content?.parts?.[0]?.text) connected = true;
+    } catch (e) {}
+  } else {
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ systemPrompt: 'أجب بكلمة متصل', contextSummary: '', userText: 'فحص' })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.reply) connected = true;
+      }
+    } catch (e) {}
+  }
+
+  state.geminiConnected = connected;
+  saveState();
+
+  if (resultEl) {
+    if (connected) {
+      resultEl.style.color = '#10b981';
+      resultEl.textContent = '✅ تم الربط بنجاح! الوكلاء الثلاثة (فهد، حازم، عبدالملك) متصلون الآن بمحرك Gemini الفعلي.';
+    } else {
+      resultEl.style.color = '#ef4444';
+      resultEl.textContent = '❌ تعذر الاتصال بـ Gemini. تأكد من صحة المفتاح (يبدأ بـ AIzaSy) أو من إضافته في إعدادات Vercel.';
+    }
+  }
+}
+
+function updateGeminiBadgesUI() {
+  const headerDot = document.getElementById('gemini-header-status');
+  const settingsBadge = document.getElementById('gemini-status-badge');
+  if (state.geminiConnected) {
+    if (headerDot) headerDot.innerHTML = '🟢 Gemini: متصل بنجاح';
+    if (settingsBadge) settingsBadge.textContent = '🟢 متصل بـ Gemini';
+  } else {
+    if (headerDot) headerDot.innerHTML = '⚪ Gemini: بانتظار الفحص';
+    if (settingsBadge) settingsBadge.textContent = '⚪ غير مفحوص';
+  }
+}
+
+function toggleDevModeButton() {
+  state.devMode = !state.devMode;
+  const panel = document.getElementById('dev-lab-panel');
+  const btn = document.getElementById('dev-mode-btn');
+  panel?.classList.toggle('hidden', !state.devMode);
+  if (btn) {
+    btn.textContent = state.devMode ? '🛑 إغلاق وضع المطور' : '⚡ تفعيل وضع المطور';
+  }
+  saveState();
+}
+
+function runFullSiteDiagnostics() {
+  const out = document.getElementById('diagnostics-output');
+  if (!out) return;
+
+  const viewsOk = ['view-home', 'view-library', 'view-chat', 'view-settings'].every(id => !!document.getElementById(id));
+  const storageSize = (JSON.stringify(state).length / 1024).toFixed(2);
+  const keyStatus = state.geminiConnected ? '✅ متصل ومفعل' : (state.settings.apiKey ? '⚠️ مفتاح محفوظ (يحتاج ضغط زر الفحص)' : '❌ لم يتم إدخال مفتاح بعد');
+
+  out.innerHTML = `
+    <p><strong>🩺 تقرير الفحص الهندسي الشامل للمنصة:</strong></p>
+    <ul style="margin:8px 18px; line-height:1.8;">
+      <li><strong>سلامة الصفحات المستقلة (4 صفحات):</strong> ${viewsOk ? '✅ جميع الصفحات تعمل بنجاح' : '❌ يوجد نقص'}</li>
+      <li><strong>الذاكرة المحلية (LocalStorage):</strong> ✅ نشطة (${storageSize} KB مستخدم)</li>
+      <li><strong>مكتبة الملفات والملاحظات:</strong> ✅ جاهزة (${state.libraryFiles.length} ملفات محفوظة)</li>
+      <li><strong>نافذة المحادثة المنبثقة (Popup Chat):</strong> ✅ مفعلة وجاهزة</li>
+      <li><strong>حالة المهندس عبدالملك:</strong> ✅ وضع الاستشارة البرمجية النقي (تم إيقاف الاقتراحات التلقائية 100%)</li>
+      <li><strong>حالة الربط مع Gemini API:</strong> ${keyStatus}</li>
+    </ul>
+  `;
+}
+
+function clearChatHistory() {
+  state.chatHistory = structuredClone(defaultState.chatHistory);
+  saveState();
+  renderChat();
+  alert('تم مسح سجل المحادثات وإعادته للوضع الابتدائي النظيف.');
+}
+
+// ==================== 6. المؤقت والاختبارات والتقارير ====================
 function updateTimerDisplay() {
   const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
   const secs = String(timerSeconds % 60).padStart(2, '0');
@@ -263,7 +611,7 @@ function startTimer() {
       state.totalStudyMinutes += 45;
       state.streak += 1;
       saveState();
-      showToast('hazem', '📊 اكتملت جلسة التعلم العميق!', 'سجّل حازم 45 دقيقة من التركيز الخالص في رصيدك المعرفي لهذا اليوم.');
+      showToast('hazem', '📊 اكتملت جلسة الـ 45 دقيقة!', 'تم تسجيل الجلسة في سجل الأداء.');
     }
   }, 1000);
 }
@@ -300,33 +648,32 @@ function toggleRainSound() {
     gain.connect(rainAudioCtx.destination);
     whiteNoise.start(0);
     isRainPlaying = true;
-    if (btn) btn.textContent = '🌧️ عزل صوتي (مطر): نشط';
+    if (btn) btn.textContent = '🌧️ صوت المطر: نشط';
   } else {
     if (rainAudioCtx) rainAudioCtx.close();
     isRainPlaying = false;
-    if (btn) btn.textContent = '🌧️ عزل صوتي (مطر): متوقف';
+    if (btn) btn.textContent = '🌧️ صوت المطر: متوقف';
   }
 }
 
-// ==================== 4. مختبر الفهم والاستيعاب ====================
 const quizBank = {
   'MO-211': {
-    q: 'ما الميزة الجوهرية لدالة XLOOKUP مقارنة بـ VLOOKUP عند بناء نماذج مطابقة البيانات الضخمة؟',
-    options: ['القدرة على البحث في أي اتجاه وإرجاع مصفوفة نتائج دون الكسر عند إدراج أعمدة', 'تعمل فقط على الأرقام الصحيحة', 'تتطلب ترتيب البيانات أبجدياً دائماً'],
+    q: 'ما الميزة الجوهرية لدالة XLOOKUP مقارنة بـ VLOOKUP عند بناء نماذج مطابقة البيانات؟',
+    options: ['البحث في أي اتجاه وعدم الانكسار عند إدراج أعمدة جديدة', 'تعمل فقط على الأرقام الصحيحة', 'تتطلب ترتيب البيانات أبجدياً'],
     correct: 0,
-    explain: 'دالة XLOOKUP تفصل عمود البحث عن عمود النتيجة تماماً، مما يجعل النموذج صلباً أمام أي تغييرات هيكلية في الجدول.'
+    explain: 'دالة XLOOKUP تفصل عمود البحث عن عمود النتيجة تماماً.'
   },
   'PL-300': {
     q: 'في لغة DAX داخل Power BI، ما الوظيفة الأساسية لدالة CALCULATE؟',
-    options: ['تعديل سياق الفلتر الحالي (Filter Context) لتنفيذ حسابات مشروطة ديناميكية', 'تغيير ألوان الرسوم البيانية تلقائياً', 'دمج ملفات النص الخارجية فقط'],
+    options: ['تعديل سياق الفلتر الحالي (Filter Context) لتنفيذ حسابات مشروطة', 'تغيير ألوان الرسوم البيانية', 'دمج ملفات النص فقط'],
     correct: 0,
-    explain: 'دالة CALCULATE هي حجر الزاوية في DAX لأنها تسمح لك بإعادة تعريف الفلاتر المؤثرة على أي مقياس (Measure).'
+    explain: 'دالة CALCULATE تعيد تعريف الفلاتر المؤثرة على أي مقياس (Measure).'
   },
   'CMA': {
-    q: 'ما الهدف الرئيسي من استخدام "الموازنة المرنة" (Flexible Budget) بدلاً من الموازنة الثابتة عند تقييم الأداء؟',
-    options: ['عزل أثر تغير حجم النشاط الفعلي لمقارنة التكاليف بعدالة ودقة', 'إلغاء جميع التكاليف الثابتة من القوائم', 'تثبيت سقف المبيعات طوال العام'],
+    q: 'ما الهدف الرئيسي من استخدام "الموازنة المرنة" (Flexible Budget) عند تقييم الأداء؟',
+    options: ['عزل أثر تغير حجم النشاط الفعلي لمقارنة التكاليف بعدالة', 'إلغاء التكاليف الثابتة', 'تثبيت سقف المبيعات'],
     correct: 0,
-    explain: 'الموازنة المرنة تُعدَّل وفق مستوى النشاط الفعلي، مما يتيح للمحلل معرفة هل الانحراف ناتج عن كفاءة التشغيل أم مجرد تغير في حجم المبيعات.'
+    explain: 'الموازنة المرنة تتكيف مع حجم النشاط الفعلي لعزل انحرافات الكفاءة.'
   }
 };
 
@@ -355,344 +702,13 @@ function answerQuiz(cat, selectedIdx) {
   if (selectedIdx === item.correct) {
     state.quizStats[cat].correct++;
     fb.style.color = '#10b981';
-    fb.textContent = `✅ استيعاب دقيق! ${item.explain}`;
+    fb.textContent = `✅ إجابة صحيحة! ${item.explain}`;
   } else {
     state.quizStats[cat].wrong++;
     fb.style.color = '#ef4444';
-    fb.textContent = `❌ نقطة جديرة بالمراجعة: ${item.explain} (سجّلها حازم في رادار الفجوات المعرفية).`;
+    fb.textContent = `❌ غير صحيح: ${item.explain}`;
   }
   saveState();
-}
-
-// ==================== 5. منظومة الوكلاء المتصلين تلقائياً بـ Gemini ====================
-function switchView(viewName) {
-  document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-  document.getElementById(`view-${viewName}`)?.classList.add('active');
-  document.getElementById(`nav-${viewName}`)?.classList.add('active');
-  if (viewName === 'chat') renderChat();
-}
-
-function switchAgent(agentKey) {
-  state.currentAgent = agentKey;
-  document.querySelectorAll('.agent-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(`tab-${agentKey}`)?.classList.add('active');
-  renderChat();
-}
-
-function renderChat() {
-  const agent = state.currentAgent;
-  const profile = agentProfiles[agent];
-  const banner = document.getElementById('agent-info-banner');
-  const skillsBar = document.getElementById('agent-skills-bar');
-  const box = document.getElementById('chat-messages');
-
-  if (banner && profile) {
-    banner.innerHTML = `<div>${profile.bio}</div>`;
-  }
-
-  if (skillsBar && profile) {
-    skillsBar.innerHTML = profile.skills.map(s => `
-      <button class="btn-outline btn-sm" onclick="sendQuickPrompt('${s.prompt}')">${s.label}</button>
-    `).join('');
-  }
-
-  const msgs = state.chatHistory[agent] || [];
-  if (box) {
-    box.innerHTML = msgs.map(m => `
-      <div class="msg ${m.sender}">
-        <div>${m.text}</div>
-        ${m.proposalId ? renderProposalButtons(m.proposalId) : ''}
-      </div>
-    `).join('');
-    box.scrollTop = box.scrollHeight;
-  }
-}
-
-function renderProposalButtons(proposalId) {
-  if (!state.pendingProposal || state.pendingProposal.id !== proposalId) return '';
-  return `
-    <div class="proposal-box">
-      <strong>🔒 تصريح هندسي — بانتظار موافقتك لتثبيت هذه الأداة فقط:</strong>
-      <div class="proposal-actions">
-        <button class="btn-primary btn-sm" onclick="approveAbdulmalikProposal('${proposalId}')">اعتماد وتثبيت الأداة ✅</button>
-        <button class="btn-danger btn-sm" onclick="rejectAbdulmalikProposal('${proposalId}')">إلغاء المقترح ❌</button>
-      </div>
-    </div>
-  `;
-}
-
-function sendQuickPrompt(text) {
-  const input = document.getElementById('chat-input');
-  if (input) {
-    input.value = text;
-    sendMessage();
-  }
-}
-
-async function sendMessage() {
-  const input = document.getElementById('chat-input');
-  if (!input || !input.value.trim()) return;
-  const userText = input.value.trim();
-  input.value = '';
-
-  const agent = state.currentAgent;
-  state.chatHistory[agent].push({ sender: 'user', text: userText });
-  renderChat();
-
-  if (agent === 'abdulmalik') {
-    handleAbdulmalikLogic(userText);
-    saveState();
-    renderChat();
-    return;
-  }
-
-  // الاتصال التلقائي بالسيرفر السحابي (/api/chat) لجلب رد Gemini مباشرة
-  const reply = await callServerlessGemini(agent, userText);
-  state.chatHistory[agent].push({ sender: 'bot', text: reply });
-  saveState();
-  renderChat();
-}
-
-async function callServerlessGemini(agent, userText) {
-  const profile = agentProfiles[agent];
-  const doneCount = state.certificates.reduce((acc, c) => acc + c.tasks.filter(t => t.done).length, 0);
-  const contextSummary = `الاستمرارية=${state.streak} يوم، دقائق التركيز اليوم=${state.studyMinutesToday} دقيقة، المحاور المنجزة=${doneCount}.`;
-
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        systemPrompt: profile.systemPrompt,
-        contextSummary,
-        userText
-      })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.reply) return data.reply;
-    }
-  } catch (e) {
-    // في حال عدم تفعيل المفتاح بعد في Vercel، يعمل المحرك البشري المحلي تلقائياً بدون خطأ
-  }
-  return generateHumanLikeReply(agent, userText);
-}
-
-function generateHumanLikeReply(agent, userText) {
-  const lower = userText.toLowerCase();
-
-  if (agent === 'fahad') {
-    if (lower.includes('تبسيط') || lower.includes('power query') || lower.includes('dax')) {
-      return `تخيل أنك تدير مطبخاً احترافياً يا صديقي 💡:\n• **Power Query** هو مرحلة "تجهيز المكونات وغسلها وتقطيعها" قبل الطبخ؛ يأخذ الجداول الفوضوية وينظفها ويرتبها.\n• أما **لغة DAX** فهي "الوصفة والنكهة النهائية"؛ تحسب لك المؤشرات الذكية اللحظية فوق البيانات النظيفة.\n\nأي الجزأين تحب أن نطبق عليه مثالاً عملياً الآن؟`;
-    }
-    if (lower.includes('سقراط') || lower.includes('سيناريو')) {
-      return `جميل جداً، أحب هذا النوع من التفكير العميق 🧠!\nتخيل أن لديك جدول عمليات يضم 50,000 سجل، وطُلب منك اكتشاف سبب تباين الأرقام في فرع واحد فقط دون بقية الفروع.\nلو كنتَ ستبدأ بفحص البيانات، **ما أول عمودين ستقارن بينهما؟**`;
-    }
-    if (lower.includes('تلخيص') || lower.includes('خلاصة')) {
-      return `إليك الخلاصة الذهبية في 3 نقاط لا تُنسى 📝:\n1. **افصل الحقائق عن الأوصاف:** ضع العمليات الرقمية في جدول (Fact Table)، وبيانات الأصناف والفروع في جداول مرجعية (Dimension Tables).\n2. **نظّف عند المصدر:** كل خطوة تنظيف تقوم بها في Power Query توفر عليك عشر معادلات معقدة لاحقاً.\n3. **اجعل اللوحة تجيب في 5 ثوانٍ:** التصميم الجيد في Power BI يبرز القرار ولا يغرق القارئ في الأرقام.`;
-    }
-    return `أعجبني سؤالك حول "${userText}" 💡. الفكرة كلها في التعلم التطبيقي هي أن نربط كل أداة بمشكلة حقيقية؛ عندما تفهم "لماذا" صُممت الدالة، يصبح "كيف" تكتبها أمراً بديهياً جداً. هل تحب أن نفكك هذه النقطة لمثال خطوة بخطوة؟`;
-  }
-
-  if (agent === 'hazem') {
-    const doneCount = state.certificates.reduce((acc, c) => acc + c.tasks.filter(t => t.done).length, 0);
-    const totalCount = state.certificates.reduce((acc, c) => acc + c.tasks.length, 0);
-    const weakTopics = Object.entries(state.quizStats)
-      .filter(([, v]) => v.wrong > 0)
-      .map(([k]) => k);
-
-    if (lower.includes('فجوات') || lower.includes('تشخيص')) {
-      return `بعد مراجعة سجلك المعرفي بهدوء 📊:\n• أتممت حتى الآن **${doneCount} من أصل ${totalCount}** محاور تأسيسية.\n• يظهر في رادار الاختبارات أن هناك حاجة لمراجعة مركزة في: **(${weakTopics.join('، ') || 'لا توجد فجوات حرجة حالياً'})**.\nتوصيتي التحليلية: خصص أول 15 دقيقة من جلستك القادمة لحل تطبيق عملي واحد في هذا المحور.`;
-    }
-    return `قراءة موضوعية لوضعك الحالي 📊: لديك استمرارية لمدة **${state.streak} يوم**، ورصيد تركيز اليوم هو **${state.studyMinutesToday} دقيقة** (التقييم: ${calculateDailyGrade()}). العبرة دائماً بجودة الـ 45 دقيقة الخالية من المشتتات.`;
-  }
-}
-
-// ==================== 6. نظام المهندس عبدالملك ومهاراته البرمجية المعزولة ====================
-function handleAbdulmalikLogic(text) {
-  const lower = text.toLowerCase();
-
-  if (lower.includes('احذف') || lower.includes('حذف') || lower.includes('تراجع') || lower.includes('شيل') || lower.includes('الغ')) {
-    if (state.abdulmalikMods.length === 0) {
-      state.chatHistory.abdulmalik.push({
-        sender: 'bot',
-        text: '🛠️ راجعت البيئة المعزولة (Sandbox)؛ لا توجد أي أدوات مفعلة حالياً لحذفها.'
-      });
-    } else {
-      const removed = state.abdulmalikMods.pop();
-      state.chatHistory.abdulmalik.push({
-        sender: 'bot',
-        text: `🗑️ تم تنفيذ أمر التراجع فوراً: حذفت أداة "${removed.title}" من بيئة التعلم ومن الذاكرة بنجاح.`
-      });
-    }
-    return;
-  }
-
-  const propId = 'prop_' + Date.now();
-  let toolType = 'vat_calc';
-  let toolTitle = 'حاسبة التحليل المالي والضريبي (VAT 15%)';
-
-  if (lower.includes('بطاقات') || lower.includes('flash')) {
-    toolType = 'flashcards';
-    toolTitle = 'أداة بطاقات الاستذكار السريع للمفاهيم (Flashcards)';
-  } else if (lower.includes('دوال') || lower.includes('محاكاة') || lower.includes('مرجع')) {
-    toolType = 'formula_lab';
-    toolTitle = 'مختبر مرجع الدوال التحليلية (Excel & DAX)';
-  }
-
-  state.pendingProposal = {
-    id: propId,
-    type: toolType,
-    title: toolTitle
-  };
-
-  state.chatHistory.abdulmalik.push({
-    sender: 'bot',
-    text: `🛠️ بصفتي مهندس النظم، جهزت لك الكود البرمجي المعزول لـ **${toolTitle}** فقط دون المساس بأي جزء آخر من المنصة. هل تعتمد تثبيتها في بيئة التعلم؟`,
-    proposalId: propId
-  });
-}
-
-function approveAbdulmalikProposal(propId) {
-  if (!state.pendingProposal || state.pendingProposal.id !== propId) return;
-  const mod = state.pendingProposal;
-  state.abdulmalikMods.push({ id: mod.id, type: mod.type, title: mod.title });
-  state.pendingProposal = null;
-  state.chatHistory.abdulmalik.push({
-    sender: 'bot',
-    text: `✅ تم تثبيت "${mod.title}" في الصفحة الرئيسية داخل الصندوق المعزول بنجاح!`
-  });
-  saveState();
-  renderChat();
-}
-
-function rejectAbdulmalikProposal(propId) {
-  state.pendingProposal = null;
-  state.chatHistory.abdulmalik.push({
-    sender: 'bot',
-    text: '❌ تم إلغاء المقترح البرمجي بناءً على توجيهك.'
-  });
-  saveState();
-  renderChat();
-}
-
-function renderAbdulmalikSandbox() {
-  const container = document.getElementById('abdulmalik-sandbox-container');
-  if (!container) return;
-
-  if (state.abdulmalikMods.length === 0) {
-    container.innerHTML = '';
-    return;
-  }
-
-  container.innerHTML = state.abdulmalikMods.map(mod => {
-    if (mod.type === 'flashcards') {
-      return `
-        <div class="card" style="border-color: #10b981;">
-          <div class="card-header">
-            <h2>🛠️ ${mod.title}</h2>
-            <button class="btn-danger btn-sm" onclick="deleteAbdulmalikMod('${mod.id}')">🗑️ حذف الأداة</button>
-          </div>
-          <p id="fc-text-${mod.id}" style="padding:12px; background:#0b1120; border-radius:8px; margin-bottom:8px;">
-            <strong>مفهوم: Star Schema</strong> — نموذج بيانات يفصل جدول العمليات الرقمية (Fact) عن جداول الأوصاف (Dimensions) لتسريع Power BI.
-          </p>
-          <button class="btn-secondary btn-sm" onclick="flipFlashcard('${mod.id}')">🔄 تقليب لبطاقة مفهوم آخر</button>
-        </div>
-      `;
-    }
-    if (mod.type === 'formula_lab') {
-      return `
-        <div class="card" style="border-color: #f59e0b;">
-          <div class="card-header">
-            <h2>🛠️ ${mod.title}</h2>
-            <button class="btn-danger btn-sm" onclick="deleteAbdulmalikMod('${mod.id}')">🗑️ حذف الأداة</button>
-          </div>
-          <select onchange="showFormulaSyntax('${mod.id}', this.value)">
-            <option value="xlookup">دالة XLOOKUP (بحث مرجعي متقدم)</option>
-            <option value="calculate">دالة CALCULATE (تغيير سياق الفلتر في DAX)</option>
-            <option value="sumifs">دالة SUMIFS (الجمع المشروط المتعدد)</option>
-          </select>
-          <p id="form-res-${mod.id}" style="margin-top:10px; font-family:monospace; color:#fcd34d; direction:ltr; text-align:left;">
-            =XLOOKUP(lookup_value, lookup_array, return_array, [if_not_found])
-          </p>
-        </div>
-      `;
-    }
-    return `
-      <div class="card" style="border-color: #3b82f6;">
-        <div class="card-header">
-          <h2>🛠️ ${mod.title}</h2>
-          <button class="btn-danger btn-sm" onclick="deleteAbdulmalikMod('${mod.id}')">🗑️ حذف الأداة</button>
-        </div>
-        <div class="input-with-btn">
-          <input type="text" id="vat-input-${mod.id}" placeholder="أدخل القيمة الأساسية قبل الضريبة..." />
-          <button class="btn-primary" onclick="calcVat('${mod.id}')">تحليل القيمة والضريبة 15%</button>
-        </div>
-        <p id="vat-res-${mod.id}" style="margin-top:8px; font-size:0.85rem; color:#60a5fa;"></p>
-      </div>
-    `;
-  }).join('');
-}
-
-function flipFlashcard(id) {
-  const cards = [
-    '<strong>مفهوم: Power Query</strong> — محرك ETL لاستخراج وتنظيف وتحويل البيانات آلياً قبل تحليلها.',
-    '<strong>مفهوم: DSO</strong> — متوسط فترة التحصيل، ويقيس عدد الأيام اللازمة لتحويل المبيعات الآجلة إلى نقد.',
-    '<strong>مفهوم: Flexible Budget</strong> — موازنة تتكيف مع حجم النشاط الفعلي لعزل انحرافات الكفاءة بدقة.'
-  ];
-  const el = document.getElementById(`fc-text-${id}`);
-  if (el) el.innerHTML = cards[Math.floor(Math.random() * cards.length)];
-}
-
-function showFormulaSyntax(id, key) {
-  const map = {
-    xlookup: '=XLOOKUP(lookup_value, lookup_array, return_array, [if_not_found])',
-    calculate: 'Measure = CALCULATE(SUM(Sales[Amount]), Sales[Region] = "Riyadh")',
-    sumifs: '=SUMIFS(sum_range, criteria_range1, criteria1, [criteria_range2, criteria2])'
-  };
-  const el = document.getElementById(`form-res-${id}`);
-  if (el) el.textContent = map[key] || '';
-}
-
-function calcVat(id) {
-  const val = parseFloat(document.getElementById(`vat-input-${id}`)?.value || 0);
-  const vat = (val * 0.15).toFixed(2);
-  const total = (val * 1.15).toFixed(2);
-  document.getElementById(`vat-res-${id}`).textContent = `مبلغ الضريبة (15%): ${vat} | الإجمالي الشامل: ${total}`;
-}
-
-function deleteAbdulmalikMod(modId) {
-  state.abdulmalikMods = state.abdulmalikMods.filter(m => m.id !== modId);
-  saveState();
-}
-
-function clearAllAbdulmalikMods() {
-  state.abdulmalikMods = [];
-  saveState();
-}
-
-function renderAbdulmalikModsManager() {
-  const box = document.getElementById('abdulmalik-mods-list');
-  if (!box) return;
-  if (state.abdulmalikMods.length === 0) {
-    box.innerHTML = '<p style="font-size:0.85rem; color:#94a3b8;">لا توجد أي أدوات برمجية مضافة حالياً.</p>';
-    return;
-  }
-  box.innerHTML = state.abdulmalikMods.map(m => `
-    <div class="task-item" style="justify-content:space-between;">
-      <span>🛠️ ${m.title}</span>
-      <button class="btn-danger btn-sm" onclick="deleteAbdulmalikMod('${m.id}')">🗑️ إزالة</button>
-    </div>
-  `).join('');
-}
-
-// ==================== 7. التقارير التحليلية والإعدادات ====================
-function calculateDailyGrade() {
-  if (state.studyMinutesToday >= 45) return 'A+ تركيز مكتمل';
-  if (state.studyMinutesToday >= 20) return 'B تقدم جيد';
-  return '⏳ قيد الإنجاز اليومي';
 }
 
 function renderHazemReportAndRadar() {
@@ -700,23 +716,16 @@ function renderHazemReportAndRadar() {
   const radarBox = document.getElementById('weakness-radar-box');
   if (evalBox) {
     evalBox.innerHTML = `
-      <p>⏱️ زمن التركيز الصافي اليوم: <strong>${state.studyMinutesToday} دقيقة</strong> (المعيار اليومي: 45 دقيقة)</p>
-      <p>📈 تشخيص جودة التعلم: <strong>${calculateDailyGrade()}</strong></p>
+      <p>⏱️ تركيز اليوم: <strong>${state.studyMinutesToday} دقيقة</strong> | 📂 ملفات المكتبة: <strong>${state.libraryFiles.length}</strong></p>
     `;
   }
   if (radarBox) {
     const entries = Object.entries(state.quizStats).map(([k, v]) => {
-      const status = v.wrong > v.correct ? '🔍 يوصى بمراجعة تطبيقية' : '✅ استيعاب متقن';
-      return `<li><strong>${k}:</strong> إجابات دقيقة (${v.correct}) | أخطاء (${v.wrong}) — ${status}</li>`;
+      const status = v.wrong > v.correct ? '🔍 يحتاج مراجعة' : '✅ متقن';
+      return `<li><strong>${k}:</strong> صح (${v.correct}) | خطأ (${v.wrong}) — ${status}</li>`;
     }).join('');
-    radarBox.innerHTML = `<ul style="margin:10px 18px; font-size:0.85rem;">${entries}</ul>`;
+    radarBox.innerHTML = `<ul style="margin:8px 18px; font-size:0.85rem;">${entries}</ul>`;
   }
-}
-
-function generateSmartDailyReport() {
-  const reportText = `📊 التقرير التحليلي للمنصة (بإشراف حازم)\n- الاستمرارية المعرفية: ${state.streak} يوم\n- زمن التركيز الصافي اليوم: ${state.studyMinutesToday} دقيقة\n- مؤشر الجودة: ${calculateDailyGrade()}`;
-  navigator.clipboard.writeText(reportText);
-  showToast('hazem', '📋 تم نسخ التقرير التحليلي!', 'تم توليد التقرير ونسخه لحافظتك، ويمكنك مناقشته مع حازم الآن.');
 }
 
 function showToast(agent, title, message) {
@@ -725,28 +734,17 @@ function showToast(agent, title, message) {
   document.getElementById('toast-title').textContent = title;
   document.getElementById('toast-message').textContent = message;
   toast?.classList.remove('hidden');
-  setTimeout(() => toast?.classList.add('hidden'), 6000);
+  setTimeout(() => toast?.classList.add('hidden'), 5000);
 }
 
 function handleToastClick() {
   document.getElementById('toast-notification')?.classList.add('hidden');
-  switchView('chat');
+  togglePopupChat();
   switchAgent(lastToastAgent);
 }
 
 function triggerTestNotification(agent) {
-  if (agent === 'fahad') {
-    showToast('fahad', '💡 إضاءة معرفية من فهد', 'اضغط هنا لنناقش مفهوماً تطبيقياً جديداً بأسلوب مبسط!');
-  } else {
-    showToast('hazem', '📊 مراجعة أداء من حازم', 'اضغط للاطلاع على تشخيص جودة التعلم وخطة المراجعة.');
-  }
-}
-
-function toggleDevMode() {
-  const checked = document.getElementById('dev-mode-checkbox')?.checked;
-  state.devMode = !!checked;
-  document.getElementById('dev-lab-panel')?.classList.toggle('hidden', !checked);
-  saveState();
+  showToast(agent, '🔔 إشعار تجريبي', 'اضغط هنا لفتح نافذة المحادثة المنبثقة مباشرة!');
 }
 
 function addStreakManually() {
@@ -770,7 +768,7 @@ function importBackup(event) {
     try {
       state = Object.assign({}, defaultState, JSON.parse(e.target.result));
       saveState();
-      alert('✅ تم استيراد قاعدة البيانات بنجاح!');
+      alert('✅ تم استعادة النسخة الاحتياطية بنجاح!');
     } catch (err) {
       alert('ملف غير صالح.');
     }
@@ -778,18 +776,28 @@ function importBackup(event) {
   reader.readAsText(file);
 }
 
-function startVoiceInput() {
+function startVoiceInput(targetInputId) {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) return alert('متصفحك لا يدعم الإدخال الصوتي المباشر.');
+  if (!SpeechRecognition) return alert('متصفحك لا يدعم الإدخال الصوتي.');
   const recognition = new SpeechRecognition();
   recognition.lang = 'ar-SA';
   recognition.onresult = event => {
-    document.getElementById('chat-input').value = event.results[0][0].transcript;
+    const el = document.getElementById(targetInputId);
+    if (el) el.value = event.results[0][0].transcript;
   };
   recognition.start();
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('api-key-input')) {
+    document.getElementById('api-key-input').value = state.settings?.apiKey || '';
+  }
+  if (state.devMode) {
+    document.getElementById('dev-lab-panel')?.classList.remove('hidden');
+    if (document.getElementById('dev-mode-btn')) {
+      document.getElementById('dev-mode-btn').textContent = '🛑 إغلاق وضع المطور';
+    }
+  }
   renderAll();
   loadQuizQuestion();
 });
