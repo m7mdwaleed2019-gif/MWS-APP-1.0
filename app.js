@@ -1,5 +1,5 @@
 // ==================== 1. قاعدة البيانات والحالة المعرفية (State) ====================
-const STORAGE_KEY = 'MWS_AI_ACADEMY_V3';
+const STORAGE_KEY = 'MWS_AI_ACADEMY_V4';
 
 const defaultState = {
   streak: 1,
@@ -7,11 +7,6 @@ const defaultState = {
   totalStudyMinutes: 45,
   currentAgent: 'fahad',
   devMode: false,
-  settings: {
-    apiKey: '',
-    tgToken: '',
-    tgChatId: ''
-  },
   certificates: [
     {
       id: 'MO-211',
@@ -61,25 +56,25 @@ const defaultState = {
     fahad: [
       {
         sender: 'bot',
-        text: 'أهلاً بك يا صديقي! معك فهد 💡. أنا هنا لنفكك أي مفهوم معقد في تحليل البيانات أو المالية ونحوله إلى فكرة بسيطة وممتعة. اختر أي مهارة من مهاراتي بالأعلى أو حدثني عفوياً عما تدرسه اليوم!'
+        text: 'أهلاً بك يا صديقي! معك فهد 💡. أنا متصل الآن بمحرك Gemini تلقائياً لنفكك أي مفهوم معقد في تحليل البيانات أو المالية ونحوله إلى فكرة بسيطة وممتعة. اختر أي مهارة من مهاراتي بالأعلى أو حدثني عفوياً عما تدرسه اليوم!'
       }
     ],
     hazem: [
       {
         sender: 'bot',
-        text: 'مرحباً بك. معك حازم 📊، محلل الأداء وجودة التعلم. مهمتي ليست الضغط عليك، بل قراءة أرقامك بهدوء وموضوعية لنكتشف معاً أين تكمن نقاط قوتك وأي المهارات تحتاج منا تركيزاً أعمق.'
+        text: 'مرحباً بك. معك حازم 📊، محلل الأداء وجودة التعلم. أقرأ مؤشرات تقدمك وأحلل إجاباتك بهدوء وموضوعية لنكتشف معاً نقاط قوتك وأي المهارات تحتاج منا تركيزاً أعمق.'
       }
     ],
     abdulmalik: [
       {
         sender: 'bot',
-        text: 'حياك الله يا بشمهندس! معك عبدالملك 🛠️، مهندس النظم والأدوات الذكية. يسعدني بناء أي أداة برمجية تفاعلية تخدم تعلمك داخل المنصة. تذكر أنني أعمل تحت إشرافك الكامل: أقترح الأداة أولاً، ولا أثبتها إلا بعد اعتمادك، ويمكنك التراجع عنها أو حذفها في أي لحظة.'
+        text: 'حياك الله يا بشمهندس! معك عبدالملك 🛠️، مهندس النظم والأدوات الذكية. يسعدني بناء أي أداة برمجية تفاعلية تخدم تعلمك داخل المنصة. أقترح الأداة أولاً، ولا أثبتها إلا بعد اعتمادك، ويمكنك التراجع عنها أو حذفها في أي لحظة.'
       }
     ]
   }
 };
 
-// تعريف الشخصيات والمهارات التخصصية لكل وكيل (Human-like Personas & Skills)
+// تعريف الشخصيات والمهارات التخصصية لكل وكيل
 const agentProfiles = {
   fahad: {
     name: 'فهد — المرشد المعرفي وشريك التعلم',
@@ -369,7 +364,7 @@ function answerQuiz(cat, selectedIdx) {
   saveState();
 }
 
-// ==================== 5. منظومة الوكلاء الأذكياء (المهارات التخصصية والأسلوب البشري) ====================
+// ==================== 5. منظومة الوكلاء المتصلين تلقائياً بـ Gemini ====================
 function switchView(viewName) {
   document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -446,7 +441,6 @@ async function sendMessage() {
   state.chatHistory[agent].push({ sender: 'user', text: userText });
   renderChat();
 
-  // المهندس عبدالملك يعمل بنظام الصلاحيات والـ Sandbox المباشر
   if (agent === 'abdulmalik') {
     handleAbdulmalikLogic(userText);
     saveState();
@@ -454,24 +448,36 @@ async function sendMessage() {
     return;
   }
 
-  // إذا وضع المستخدم مفتاح Gemini API في الإعدادات، نستخدم الذكاء الاصطناعي الحي
-  if (state.settings.apiKey && state.settings.apiKey.startsWith('AIza')) {
-    try {
-      const reply = await callGeminiAgent(agent, userText);
-      state.chatHistory[agent].push({ sender: 'bot', text: reply });
-      saveState();
-      renderChat();
-      return;
-    } catch (e) {
-      // في حال فشل الاتصال ننتقل للرد الذكي المحلي بسلاسة
-    }
-  }
-
-  // محرك الردود البشرية المحلي الذكي (Human-like Contextual Engine)
-  const smartReply = generateHumanLikeReply(agent, userText);
-  state.chatHistory[agent].push({ sender: 'bot', text: smartReply });
+  // الاتصال التلقائي بالسيرفر السحابي (/api/chat) لجلب رد Gemini مباشرة
+  const reply = await callServerlessGemini(agent, userText);
+  state.chatHistory[agent].push({ sender: 'bot', text: reply });
   saveState();
   renderChat();
+}
+
+async function callServerlessGemini(agent, userText) {
+  const profile = agentProfiles[agent];
+  const doneCount = state.certificates.reduce((acc, c) => acc + c.tasks.filter(t => t.done).length, 0);
+  const contextSummary = `الاستمرارية=${state.streak} يوم، دقائق التركيز اليوم=${state.studyMinutesToday} دقيقة، المحاور المنجزة=${doneCount}.`;
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemPrompt: profile.systemPrompt,
+        contextSummary,
+        userText
+      })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.reply) return data.reply;
+    }
+  } catch (e) {
+    // في حال عدم تفعيل المفتاح بعد في Vercel، يعمل المحرك البشري المحلي تلقائياً بدون خطأ
+  }
+  return generateHumanLikeReply(agent, userText);
 }
 
 function generateHumanLikeReply(agent, userText) {
@@ -479,15 +485,15 @@ function generateHumanLikeReply(agent, userText) {
 
   if (agent === 'fahad') {
     if (lower.includes('تبسيط') || lower.includes('power query') || lower.includes('dax')) {
-      return `تخيل أنك تدير مطبخاً احترافياً يا صديقي 💡:\n• **Power Query** هو مرحلة "تجهيز المكونات وغسلها وتقطيعها" قبل الطبخ؛ يأخذ الجداول الفوضوية وينظفها ويرتبها.\n• أما **لغة DAX** فهي "الوصفة والنكهة النهائية"؛ تحسب لك المؤشرات الذكية اللحظية (مثل مقارنة أداء هذا الشهر بالشهر الماضي) فوق البيانات النظيفة.\n\nأي الجزأين تحب أن نطبق عليه مثالاً عملياً الآن؟`;
+      return `تخيل أنك تدير مطبخاً احترافياً يا صديقي 💡:\n• **Power Query** هو مرحلة "تجهيز المكونات وغسلها وتقطيعها" قبل الطبخ؛ يأخذ الجداول الفوضوية وينظفها ويرتبها.\n• أما **لغة DAX** فهي "الوصفة والنكهة النهائية"؛ تحسب لك المؤشرات الذكية اللحظية فوق البيانات النظيفة.\n\nأي الجزأين تحب أن نطبق عليه مثالاً عملياً الآن؟`;
     }
     if (lower.includes('سقراط') || lower.includes('سيناريو')) {
-      return `جميل جداً، أحب هذا النوع من التفكير العميق 🧠!\nتخيل أن لديك جدول مبيعات يضم 50,000 عملية، وطُلب منك معرفة سبب تراجع التحصيل في فرع واحد فقط دون بقية الفروع.\nلو كنتَ ستبدأ بفحص البيانات، **ما أول عمودين ستقارن بينهما؟** خذ راحتك وفكر فيها كمحلل!`;
+      return `جميل جداً، أحب هذا النوع من التفكير العميق 🧠!\nتخيل أن لديك جدول عمليات يضم 50,000 سجل، وطُلب منك اكتشاف سبب تباين الأرقام في فرع واحد فقط دون بقية الفروع.\nلو كنتَ ستبدأ بفحص البيانات، **ما أول عمودين ستقارن بينهما؟**`;
     }
     if (lower.includes('تلخيص') || lower.includes('خلاصة')) {
-      return `إليك الخلاصة الذهبية في 3 نقاط لا تُنسى 📝:\n1. **افصل الحقائق عن الأوصاف:** ضع العمليات الرقمية في جدول (Fact Table)، وبيانات العملاء والأصناف في جداول مرجعية (Dimension Tables).\n2. **نظّف عند المصدر:** كل خطوة تنظيف تقوم بها في Power Query توفر عليك عشر معادلات معقدة لاحقاً.\n3. **اجعل اللوحة تجيب في 5 ثوانٍ:** التصميم الجيد في Power BI يبرز القرار ولا يغرق القارئ في الأرقام.`;
+      return `إليك الخلاصة الذهبية في 3 نقاط لا تُنسى 📝:\n1. **افصل الحقائق عن الأوصاف:** ضع العمليات الرقمية في جدول (Fact Table)، وبيانات الأصناف والفروع في جداول مرجعية (Dimension Tables).\n2. **نظّف عند المصدر:** كل خطوة تنظيف تقوم بها في Power Query توفر عليك عشر معادلات معقدة لاحقاً.\n3. **اجعل اللوحة تجيب في 5 ثوانٍ:** التصميم الجيد في Power BI يبرز القرار ولا يغرق القارئ في الأرقام.`;
     }
-    return `أعجبني سؤالك حول "${userText}" 💡. الفكرة كلها في التعلم التطبيقي هي أن نربط كل أداة بمشكلة حقيقية؛ عندما تفهم "لماذا" صُممت الدالة، يصبح "كيف" تكتبها أمراً بديهياً جداً. هل تحب أن نفكك هذه النقطة لمثال خطوة بخطوة أو نختبرها بسؤال تطبيقي؟`;
+    return `أعجبني سؤالك حول "${userText}" 💡. الفكرة كلها في التعلم التطبيقي هي أن نربط كل أداة بمشكلة حقيقية؛ عندما تفهم "لماذا" صُممت الدالة، يصبح "كيف" تكتبها أمراً بديهياً جداً. هل تحب أن نفكك هذه النقطة لمثال خطوة بخطوة؟`;
   }
 
   if (agent === 'hazem') {
@@ -498,30 +504,10 @@ function generateHumanLikeReply(agent, userText) {
       .map(([k]) => k);
 
     if (lower.includes('فجوات') || lower.includes('تشخيص')) {
-      return `بعد مراجعة سجلك المعرفي بهدوء 📊:\n• أتممت حتى الآن **${doneCount} من أصل ${totalCount}** محاور تأسيسية.\n• يظهر في رادار الاختبارات أنك متمكن في الأساسيات، لكن هناك حاجة لمراجعة مركزة في: **(${weakTopics.join('، ') || 'لا توجد فجوات حرجة حالياً'})**.\nنصيحتي التحليلية: خصص أول 15 دقيقة من جلستك القادمة لحل تطبيق عملي واحد في هذا المحور قبل الانتقال لدرس جديد.`;
+      return `بعد مراجعة سجلك المعرفي بهدوء 📊:\n• أتممت حتى الآن **${doneCount} من أصل ${totalCount}** محاور تأسيسية.\n• يظهر في رادار الاختبارات أن هناك حاجة لمراجعة مركزة في: **(${weakTopics.join('، ') || 'لا توجد فجوات حرجة حالياً'})**.\nتوصيتي التحليلية: خصص أول 15 دقيقة من جلستك القادمة لحل تطبيق عملي واحد في هذا المحور.`;
     }
-    if (lower.includes('جدول') || lower.includes('خطة')) {
-      return `خطة المراجعة الموصى بها لهذا الأسبوع 🗓️:\n• **الأحد والثلاثاء (45 د):** تطبيق عملي على تنظيف البيانات ومعادلات الربط.\n• **الإثنين والأربعاء (45 د):** فهم المفاهيم التحليلية وحل سؤالين في مختبر الاستيعاب.\n• **الخميس (30 د):** توثيق نموذج عملي واحد في سجل المشاريع لترسيخ المعلومة.`;
-    }
-    return `قراءة موضوعية لوضعك الحالي 📊: لديك استمرارية لمدة **${state.streak} يوم**، ورصيد تركيز اليوم هو **${state.studyMinutesToday} دقيقة** (التقييم: ${calculateDailyGrade()}). تذكر دائماً أن العبرة ليست بكثرة الساعات المتقطعة، بل بجودة الـ 45 دقيقة الخالية من المشتتات.`;
+    return `قراءة موضوعية لوضعك الحالي 📊: لديك استمرارية لمدة **${state.streak} يوم**، ورصيد تركيز اليوم هو **${state.studyMinutesToday} دقيقة** (التقييم: ${calculateDailyGrade()}). العبرة دائماً بجودة الـ 45 دقيقة الخالية من المشتتات.`;
   }
-}
-
-async function callGeminiAgent(agent, userText) {
-  const profile = agentProfiles[agent];
-  const contextSummary = `بيانات المتعلم الحالية: الاستمرارية=${state.streak} يوم، دقائق الدراسة اليوم=${state.studyMinutesToday} دقيقة.`;
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${state.settings.apiKey}`;
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{
-        parts: [{ text: `${profile.systemPrompt}\n${contextSummary}\nرسالة المتعلم: ${userText}` }]
-      }]
-    })
-  });
-  const data = await response.json();
-  return data?.candidates?.[0]?.content?.parts?.[0]?.text || generateHumanLikeReply(agent, userText);
 }
 
 // ==================== 6. نظام المهندس عبدالملك ومهاراته البرمجية المعزولة ====================
@@ -727,48 +713,10 @@ function renderHazemReportAndRadar() {
   }
 }
 
-function saveSettings() {
-  state.settings.apiKey = document.getElementById('api-key-input')?.value.trim() || '';
-  state.settings.tgToken = document.getElementById('tg-token-input')?.value.trim() || '';
-  state.settings.tgChatId = document.getElementById('tg-chatid-input')?.value.trim() || '';
-  saveState();
-  alert('✅ تم حفظ إعدادات المنصة بنجاح!');
-}
-
-async function autoFetchChatId() {
-  const token = document.getElementById('tg-token-input')?.value.trim();
-  if (!token) return alert('يرجى إدخال Bot Token أولاً ثم إرسال رسالة /start لبوتك في تيليجرام.');
-  try {
-    const res = await fetch(`https://api.telegram.org/bot${token}/getUpdates`);
-    const data = await res.json();
-    const chatId = data?.result?.[data.result.length - 1]?.message?.chat?.id;
-    if (chatId) {
-      document.getElementById('tg-chatid-input').value = chatId;
-      saveSettings();
-    } else {
-      alert('لم يتم العثور على رسالة حديثة. افتح البوت في تيليجرام واضغط Start ثم جرب مرة أخرى.');
-    }
-  } catch (e) {
-    alert('تعذر الاتصال بتيليجرام، تأكد من صحة الـ Token.');
-  }
-}
-
-async function sendTelegramReport() {
-  const { tgToken, tgChatId } = state.settings;
-  if (!tgToken || !tgChatId) {
-    return alert('يرجى حفظ رمز البوت ومعرف المحادثة (Chat ID) في الإعدادات أولاً.');
-  }
-  const text = `📊 *التقرير التحليلي اليومي — بإشراف حازم*\n🔥 الاستمرارية المعرفية: ${state.streak} يوم\n⏱️ زمن التركيز الصافي: ${state.studyMinutesToday} دقيقة\n📈 مؤشر الجودة: ${calculateDailyGrade()}`;
-  try {
-    await fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: tgChatId, text, parse_mode: 'Markdown' })
-    });
-    alert('📲 تم إرسال التقرير التحليلي إلى تيليجرام بنجاح!');
-  } catch (e) {
-    alert('حدث خطأ أثناء الإرسال إلى تيليجرام.');
-  }
+function generateSmartDailyReport() {
+  const reportText = `📊 التقرير التحليلي للمنصة (بإشراف حازم)\n- الاستمرارية المعرفية: ${state.streak} يوم\n- زمن التركيز الصافي اليوم: ${state.studyMinutesToday} دقيقة\n- مؤشر الجودة: ${calculateDailyGrade()}`;
+  navigator.clipboard.writeText(reportText);
+  showToast('hazem', '📋 تم نسخ التقرير التحليلي!', 'تم توليد التقرير ونسخه لحافظتك، ويمكنك مناقشته مع حازم الآن.');
 }
 
 function showToast(agent, title, message) {
@@ -842,11 +790,6 @@ function startVoiceInput() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  if (document.getElementById('api-key-input')) {
-    document.getElementById('api-key-input').value = state.settings.apiKey || '';
-    document.getElementById('tg-token-input').value = state.settings.tgToken || '';
-    document.getElementById('tg-chatid-input').value = state.settings.tgChatId || '';
-  }
   renderAll();
   loadQuizQuestion();
 });
