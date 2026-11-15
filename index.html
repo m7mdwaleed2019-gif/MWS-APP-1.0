@@ -28,7 +28,7 @@
       <div id="header-badges" class="badges-row"></div>
     </div>
 
-    <!-- مؤشر الكفاءة المعرفية والإتقان (بديل شريط الراتب) -->
+    <!-- مؤشر الكفاءة المعرفية والإتقان -->
     <div class="market-value-box">
       <div class="mv-labels">
         <span>المستوى الحالي: <strong id="mastery-level-title">متعلم تطبيقي</strong></span>
@@ -98,7 +98,7 @@
 
     </section>
 
-    <!-- ==================== 2. صفحة الوكلاء الأذكياء (شركاء التعلم والتطوير) ==================== -->
+    <!-- ==================== 2. صفحة الوكلاء الأذكياء (متصلون تلقائياً بـ Gemini) ==================== -->
     <section id="view-chat" class="view-section">
       
       <!-- مبدل الوكلاء -->
@@ -126,21 +126,24 @@
       <!-- شريط الإرسال الصوتي والنصي -->
       <div class="chat-input-bar">
         <button class="btn-icon" onclick="startVoiceInput()" title="تحدث بالمايكروفون">🎙️</button>
-        <input type="text" id="chat-input" placeholder="حاور الوكيل أو اطلب تفعيل إحدى مهاراته..." onkeypress="if(event.key==='Enter') sendMessage()" />
+        <input type="text" id="chat-input" placeholder="حاور الوكيل مباشرة (مدعوم تلقائياً بـ Gemini AI)..." onkeypress="if(event.key==='Enter') sendMessage()" />
         <button class="btn-primary" onclick="sendMessage()">إرسال 🚀</button>
       </div>
 
     </section>
 
-    <!-- ==================== 3. صفحة الرقابة التحليلية والإعدادات ==================== -->
+    <!-- ==================== 3. صفحة التحليلات والإعدادات ==================== -->
     <section id="view-settings" class="view-section">
 
       <!-- تحليلات حازم ورادار الفجوات المعرفية -->
       <div class="card">
-        <h2>📊 تشخيص الأداء ورادار الفجوات المعرفية (بإشراف حازم)</h2>
+        <div class="card-header">
+          <h2>📊 تشخيص الأداء ورادار الفجوات المعرفية (بإشراف حازم)</h2>
+          <span id="ai-connection-badge" class="badge-pill">⚡ Gemini AI: متصل تلقائياً</span>
+        </div>
         <div id="hazem-evaluation-summary" class="eval-box"></div>
         <div id="weakness-radar-box" class="radar-box"></div>
-        <button class="btn-primary full-width" onclick="sendTelegramReport()">📲 إرسال التقرير التحليلي إلى تيليجرام</button>
+        <button class="btn-primary full-width" onclick="generateSmartDailyReport()">📋 توليد ونسخ التقرير التحليلي الشامل</button>
       </div>
 
       <!-- مدير أدوات المهندس عبدالملك -->
@@ -151,27 +154,6 @@
         </div>
         <p class="hint-text">جميع الأدوات هنا معزولة برمجياً (Sandboxed)؛ يمكنك حذف أي أداة بضغطة زر دون التأثير على استقرار المنصة.</p>
         <div id="abdulmalik-mods-list"></div>
-      </div>
-
-      <!-- إعدادات الذكاء الاصطناعي وتيليجرام -->
-      <div class="card">
-        <h2>🔑 الربط البرمجي السحابي (Gemini AI & Telegram)</h2>
-        <div class="form-group">
-          <label>مفتاح Gemini API (لتفعيل المحادثة البشرية الذكية الحية للوكلاء):</label>
-          <input type="password" id="api-key-input" placeholder="AIzaSy..." />
-        </div>
-        <div class="form-group">
-          <label>رمز بوت تيليجرام (Telegram Bot Token):</label>
-          <input type="text" id="tg-token-input" placeholder="123456789:ABCdefGHIjklMNO..." />
-        </div>
-        <div class="form-group">
-          <label>معرف المحادثة (Telegram Chat ID):</label>
-          <div class="input-with-btn">
-            <input type="text" id="tg-chatid-input" placeholder="مثال: 987654321" />
-            <button class="btn-secondary" onclick="autoFetchChatId()">🪄 جلب تلقائي</button>
-          </div>
-        </div>
-        <button class="btn-primary full-width" onclick="saveSettings()">💾 حفظ إعدادات المنصة</button>
       </div>
 
       <!-- النسخ الاحتياطي ووضع المطور -->
