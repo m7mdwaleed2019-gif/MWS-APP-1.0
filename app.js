@@ -1,5 +1,5 @@
-// ==================== 1. قاعدة البيانات والحالة (State) ====================
-const STORAGE_KEY = 'MWS_AI_ACADEMY_V5';
+// ==================== 1. قاعدة البيانات والحالة الصارمة (Strict State) ====================
+const STORAGE_KEY = 'MWS_AI_ACADEMY_V7_STRICT';
 
 const defaultState = {
   streak: 1,
@@ -7,7 +7,10 @@ const defaultState = {
   totalStudyMinutes: 45,
   currentAgent: 'fahad',
   devMode: false,
+  // الحالة الافتراضية أوفلاين دائماً حتى يثبت الاتصال الفعلي بنموذج حقيقي
   geminiConnected: false,
+  aiProviderName: 'Offline',
+  lastAiError: 'لم يتم التحقق من اتصال نموذج الذكاء الاصطناعي بعد.',
   settings: {
     apiKey: ''
   },
@@ -66,47 +69,49 @@ const defaultState = {
     'CMA': { correct: 0, wrong: 1 }
   },
   chatHistory: {
-    fahad: [
-      { sender: 'bot', text: 'أهلاً بك! أنا فهد 💡. جاهز لشرح أي مفهوم أو معادلة أو مناقشة ملفاتك الدراسية.' }
-    ],
-    hazem: [
-      { sender: 'bot', text: 'مرحباً بك. أنا حازم 📊. أتابع جودة تركيزك وأحلل تقدمك في المسارات والاختبارات.' }
-    ],
-    abdulmalik: [
-      { sender: 'bot', text: 'أهلاً بك يا بشمهندس! أنا عبدالملك 🛠️. أعمل الآن كمستشار برمجي وتقني مباشر للإجابة على استفساراتك في البرمجة وهندسة الذكاء الاصطناعي دون أي اقتراحات تلقائية.' }
-    ]
+    fahad: [],
+    hazem: [],
+    abdulmalik: []
   }
 };
 
-// تعريف المهارات وتوجيهات الوكلاء (بدون نصوص زائدة في الواجهة وبدون اقتراحات من عبدالملك)
 const agentProfiles = {
   fahad: {
-    systemPrompt: 'أنت "فهد"، مرشد معرفي وصديق دراسة ذكي وودود. تتحدث بعربية طبيعية راقية ومختصرة. تشرح مفاهيم تحليل البيانات (Excel, Power BI) والمحاسبة الإدارية (CMA) والذكاء الاصطناعي بأمثلة واقعية.',
+    displayName: '💡 فهد',
+    systemPrompt: `أنت "فهد"، مرشد أكاديمي وخبير عملي في تحليل البيانات (Excel المتقدم، Power Query، Power BI، DAX) والتحليل المالي (CMA) وهندسة الذكاء الاصطناعي.
+تحدث بأسلوب بشري طبيعي وذكي ومفصل، واشرح بالأمثلة العملية والخطوات الواضحة.`,
     skills: [
-      { label: '🧩 تبسيط مفهوم', prompt: 'اشرح لي ببساطة الفرق العملي بين Power Query ولغة DAX بمثال واقعي.' },
-      { label: '🧠 سؤال استنتاجي', prompt: 'اطرح عليّ سيناريو عملياً قصيراً في تحليل البيانات وناقشني في حله.' },
-      { label: '📝 تلخيص مركز', prompt: 'لخص لي أهم 3 قواعد لبناء نموذج بيانات Star Schema في Power BI.' }
+      { label: '🧩 تبسيط مفهوم بعمق', prompt: 'اشرح لي بعمق وأمثلة عملية الفرق بين Power Query ولغة DAX ومتى أستخدم كلاً منهما.' },
+      { label: '🧠 سيناريو تطبيقي', prompt: 'اطرح عليّ مشكلة عملية واقعية في تحليل البيانات وناقشني في خطوات حلها.' },
+      { label: '📝 تلخيص احترافي', prompt: 'لخص لي أهم القواعد الهندسية لبناء نموذج Star Schema احترافي في Power BI.' }
     ]
   },
   hazem: {
-    systemPrompt: 'أنت "حازم"، محلل أداء وجودة تعلم هادئ وموضوعي. تحلل تقدم المتعلم، وتكشف الفجوات المعرفية من إحصائيات الاختبارات، وتضع خطط مراجعة عملية.',
+    displayName: '📊 حازم',
+    systemPrompt: `أنت "حازم"، مستشار ومحلل أداء أكاديمي ومهني رصين ودقيق جداً.
+حلل أرقام المتعلم (الاستمرارية، دقائق التركيز، نتائج الاختبارات، وملفات المكتبة) لتقدم تشخيصاً حقيقياً وخطط عمل مخصصة.`,
     skills: [
-      { label: '🔍 تشخيص الفجوات', prompt: 'حلل أدائي الحالي في الاختبارات والمحاور وحدد أين أحتاج مراجعة.' },
-      { label: '📈 تقييم التركيز', prompt: 'قيّم استمراريتي وجودة جلسات التركيز وقدم لي نصيحة عملية.' },
-      { label: '🗓️ جدول الأسبوع', prompt: 'صمم لي خطة مراجعة مرنة لتوزيع جلسات الـ 45 دقيقة هذا الأسبوع.' }
+      { label: '🔍 تشخيص الفجوات', prompt: 'حلل أدائي الحالي في الاختبارات والمحاور وحدد بدقة أين أحتاج مراجعة وكيف أعالجها.' },
+      { label: '📈 تقييم التركيز', prompt: 'قيّم استمراريتي وجودة جلسات التركيز وقدم لي استراتيجية عملية لرفع الكفاءة.' },
+      { label: '🗓️ جدول الأسبوع', prompt: 'صمم لي خطة مراجعة أسبوعية مفصلة لتوزيع جلسات الـ 45 دقيقة.' }
     ]
   },
   abdulmalik: {
-    systemPrompt: 'أنت "عبدالملك"، مهندس برمجيات ومستشار تقني محترف. تجيب مباشرة وبوضوح على أسئلة البرمجة، قواعد البيانات، وهندسة الذكاء الاصطناعي. مهم جداً: لا تقترح إضافة أدوات أو تعديلات على الموقع إطلاقاً، بل أجب كخبير تقني فقط.',
+    displayName: '🛠️ عبدالملك',
+    systemPrompt: `أنت "عبدالملك"، كبير مهندسي البرمجيات ونظم الذكاء الاصطناعي.
+اشرح الأكواد البرمجية، قواعد البيانات، الـ APIs، وهندسة الأوامر بأسلوب هندسي واضح وعميق. لا تقترح إضافة أدوات للموقع من تلقاء نفسك.`,
     skills: [
-      { label: '💻 شرح كود برمجي', prompt: 'اشرح لي كيف يتصل تطبيق الويب بواجهة Gemini API خطوة بخطوة.' },
-      { label: '🗄️ قواعد البيانات', prompt: 'ما الفرق العملي بين LocalStorage وقاعدة بيانات سحابية مثل Supabase؟' },
-      { label: '🤖 هندسة الأوامر', prompt: 'أعطني أهم القواعد لكتابة System Prompt احترافي للوكلاء الأذكياء.' }
+      { label: '💻 شرح معمارية الكود', prompt: 'اشرح لي كيف يعمل الكود البرمجي لهذا الموقع وكيف يتصل بـ API الذكاء الاصطناعي.' },
+      { label: '🗄️ قواعد البيانات السحابية', prompt: 'اشرح لي بالتفصيل كيف نربط تطبيق ويب بقاعدة بيانات Supabase خطوة بخطوة.' },
+      { label: '🤖 هندسة الوكلاء (Agents)', prompt: 'كيف أطور وكلاء ذكاء اصطناعي بذاكرة طويلة المدى ومهارات متقدمة؟' }
     ]
   }
 };
 
 let state = loadState();
+// عند كل فتح للموقع نبدأ بحالة أوفلاين حتى يتم فحص المفتاح فعلياً
+state.geminiConnected = false;
+
 let timerInterval = null;
 let timerSeconds = 45 * 60;
 let rainAudioCtx = null;
@@ -127,7 +132,7 @@ function saveState() {
   renderAll();
 }
 
-// ==================== 2. رسم الواجهة والصفحات المستقلة ====================
+// ==================== 2. رسم الواجهة وحالة الأونلاين/أوفلاين ====================
 function renderAll() {
   renderHeaderBadges();
   renderMasteryIndex();
@@ -135,7 +140,7 @@ function renderAll() {
   renderProjects();
   renderLibrary();
   renderHazemReportAndRadar();
-  updateGeminiBadgesUI();
+  updateAgentsOnlineOfflineUI();
 }
 
 function switchView(viewName) {
@@ -151,11 +156,71 @@ function switchView(viewName) {
 function renderHeaderBadges() {
   const container = document.getElementById('header-badges');
   if (!container) return;
+  const statusPill = state.geminiConnected
+    ? `<span class="badge-pill" style="border-color:#10b981; color:#10b981;">🟢 الوكلاء: أونلاين</span>`
+    : `<span class="badge-pill" style="border-color:#ef4444; color:#fca5a5;">🔴 الوكلاء: أوفلاين</span>`;
+
   container.innerHTML = `
+    ${statusPill}
     <span class="badge-pill">🔥 ${state.streak} يوم</span>
     <span class="badge-pill">⏱️ ${state.studyMinutesToday} د</span>
     <span class="badge-pill">📂 ${state.libraryFiles.length} ملفات</span>
   `;
+}
+
+function updateAgentsOnlineOfflineUI() {
+  const isOnline = !!state.geminiConnected;
+  const headerDot = document.getElementById('gemini-header-status');
+  const settingsBadge = document.getElementById('gemini-status-badge');
+
+  // تحديث شريط الهيدر والإعدادات
+  if (isOnline) {
+    if (headerDot) {
+      headerDot.style.color = '#10b981';
+      headerDot.innerHTML = `🟢 متصل بنموذج حقيقي (${state.aiProviderName})`;
+    }
+    if (settingsBadge) {
+      settingsBadge.style.borderColor = '#10b981';
+      settingsBadge.style.color = '#10b981';
+      settingsBadge.textContent = `🟢 أونلاين (${state.aiProviderName})`;
+    }
+  } else {
+    if (headerDot) {
+      headerDot.style.color = '#ef4444';
+      headerDot.innerHTML = '🔴 الوكلاء: أوفلاين (غير متصلين بنموذج حقيقي)';
+    }
+    if (settingsBadge) {
+      settingsBadge.style.borderColor = '#ef4444';
+      settingsBadge.style.color = '#fca5a5';
+      settingsBadge.textContent = '🔴 أوفلاين (Offline)';
+    }
+  }
+
+  // تحديث أسماء التبويبات للوكلاء الثلاثة لتوضيح الأونلاين والأوفلاين
+  const statusTag = isOnline ? '🟢 أونلاين' : '🔴 أوفلاين';
+  ['fahad', 'hazem', 'abdulmalik'].forEach(key => {
+    const baseName = agentProfiles[key].displayName;
+    const mainTab = document.getElementById(`tab-${key}`);
+    const popTab = document.getElementById(`pop-tab-${key}`);
+    if (mainTab) mainTab.innerHTML = `${baseName} <small style="display:block; font-size:0.7rem;">(${statusTag})</small>`;
+    if (popTab) popTab.innerHTML = `${baseName} (${ isOnline ? '🟢' : '🔴' })`;
+  });
+
+  // قفل أو فتح حقول الإدخال في الدردشة بناءً على حالة الاتصال الحقيقية
+  const mainInput = document.getElementById('chat-input');
+  const popInput = document.getElementById('popup-chat-input');
+  if (mainInput) {
+    mainInput.disabled = !isOnline;
+    mainInput.placeholder = isOnline
+      ? `تحدث مباشرة مع ${agentProfiles[state.currentAgent].displayName} (متصل بـ ${state.aiProviderName})...`
+      : '🔴 الوكيل أوفلاين حالياً — يرجى ربط مفتاح ذكاء اصطناعي فعال من صفحة الإعدادات...';
+  }
+  if (popInput) {
+    popInput.disabled = !isOnline;
+    popInput.placeholder = isOnline
+      ? 'اكتب رسالتك هنا...'
+      : '🔴 الوكيل أوفلاين (افتح الإعدادات للربط)';
+  }
 }
 
 function renderMasteryIndex() {
@@ -237,7 +302,7 @@ function addNewProject() {
   saveState();
 }
 
-// ==================== 3. مكتبة الملفات والملاحظات (Library & Notes) ====================
+// ==================== 3. مكتبة الملفات والملاحظات ====================
 function uploadFileToLibrary() {
   const fileInput = document.getElementById('library-file-input');
   const catInput = document.getElementById('library-category-input');
@@ -341,25 +406,31 @@ function askAgentAboutFile(fileId) {
   if (!item) return;
   const modal = document.getElementById('popup-chat-modal');
   modal?.classList.remove('hidden');
+  if (!state.geminiConnected) {
+    renderChat();
+    return;
+  }
   const popInput = document.getElementById('popup-chat-input');
   if (popInput) {
-    popInput.value = `لدي ملف بعنوان "${item.name}" في مسار (${item.category}) وملاحظاتي عليه: "${item.notes || 'لا توجد'}". أعطني أهم النقاط التطبيقية للتركيز عليها.`;
+    popInput.value = `لدي ملف بعنوان "${item.name}" في مسار (${item.category}) وملاحظاتي عليه: "${item.notes || 'لا توجد'}". اشرح لي أهم المفاهيم والتطبيقات العملية المرتبطة به بعمق.`;
     sendMessage('popup');
   }
 }
 
-// ==================== 4. الدردشة المستقلة + النافذة المنبثقة (دعم كامل لمفتاح AQ و AIza) ====================
+// ==================== 4. الدردشة الصارمة (لا ردود وهمية أبداً - إما نموذج حقيقي أو أوفلاين) ====================
 function switchAgent(agentKey) {
   state.currentAgent = agentKey;
   document.querySelectorAll('.agent-tab, .mini-tab').forEach(t => t.classList.remove('active'));
   document.getElementById(`tab-${agentKey}`)?.classList.add('active');
   document.getElementById(`pop-tab-${agentKey}`)?.classList.add('active');
+  updateAgentsOnlineOfflineUI();
   renderChat();
 }
 
 function togglePopupChat() {
   const modal = document.getElementById('popup-chat-modal');
   modal?.classList.toggle('hidden');
+  updateAgentsOnlineOfflineUI();
   renderChat();
 }
 
@@ -371,12 +442,48 @@ function renderChat() {
   const popupBox = document.getElementById('popup-chat-messages');
 
   if (skillsBar && profile) {
-    skillsBar.innerHTML = profile.skills.map(s => `
-      <button class="btn-outline btn-sm" onclick="sendQuickPrompt('${s.prompt}')">${s.label}</button>
-    `).join('');
+    if (state.geminiConnected) {
+      skillsBar.innerHTML = profile.skills.map(s => `
+        <button class="btn-outline btn-sm" onclick="sendQuickPrompt('${s.prompt}')">${s.label}</button>
+      `).join('');
+    } else {
+      skillsBar.innerHTML = `
+        <button class="btn-danger btn-sm" onclick="switchView('settings')">🔴 الوكلاء أوفلاين — اضغط هنا لربط مفتاح الذكاء الاصطناعي وتفعيلهم</button>
+      `;
+    }
+  }
+
+  // إذا كان الوكيل أوفلاين، نعرض لافتة أوفلاين صريحة داخل صندوق الدردشة
+  if (!state.geminiConnected) {
+    const offlineHtml = `
+      <div class="card" style="border-color:#ef4444; background:rgba(239,68,68,0.08); text-align:center; margin:auto;">
+        <h2 style="color:#fca5a5; margin-bottom:8px;">🔴 ${profile.displayName} في وضع أوفلاين (Offline)</h2>
+        <p style="font-size:0.85rem; color:#cbd5e1; margin-bottom:10px;">
+          تم إيقاف الردود المبرمجة مسبقاً بناءً على طلبك. هذا الوكيل لا يعمل إلا عند اتصاله بنموذج ذكاء اصطناعي حقيقي (Live AI Model).
+        </p>
+        <p style="font-size:0.8rem; color:#f87171; margin-bottom:12px;">
+          <strong>السبب الحالي:</strong> ${state.lastAiError}
+        </p>
+        <button class="btn-primary btn-sm" onclick="switchView('settings')">⚙️ الذهاب للإعدادات لتشغيل الوكلاء أونلاين</button>
+      </div>
+    `;
+    if (mainBox) mainBox.innerHTML = offlineHtml;
+    if (popupBox) popupBox.innerHTML = offlineHtml;
+    return;
   }
 
   const msgs = state.chatHistory[agent] || [];
+  if (msgs.length === 0) {
+    const welcomeHtml = `
+      <div class="msg bot">
+        <div>🟢 <strong>${profile.displayName} (أونلاين — متصل فعلياً بـ ${state.aiProviderName}):</strong><br>أهلاً بك! أنا متصل الآن بنموذج الذكاء الاصطناعي الحقيقي وجاهز لأي حوار عميق.</div>
+      </div>
+    `;
+    if (mainBox) mainBox.innerHTML = welcomeHtml;
+    if (popupBox) popupBox.innerHTML = welcomeHtml;
+    return;
+  }
+
   const msgsHtml = msgs.map(m => `
     <div class="msg ${m.sender}">
       <div>${m.text}</div>
@@ -394,6 +501,10 @@ function renderChat() {
 }
 
 function sendQuickPrompt(text) {
+  if (!state.geminiConnected) {
+    alert('🔴 الوكيل أوفلاين حالياً! يرجى تفعيل المفتاح من الإعدادات أولاً.');
+    return;
+  }
   const input = document.getElementById('chat-input');
   if (input) {
     input.value = text;
@@ -402,6 +513,11 @@ function sendQuickPrompt(text) {
 }
 
 async function sendMessage(source = 'main') {
+  if (!state.geminiConnected) {
+    alert('🔴 الوكلاء في وضع أوفلاين. يرجى تفعيل الاتصال من صفحة الإعدادات.');
+    return;
+  }
+
   const inputId = source === 'popup' ? 'popup-chat-input' : 'chat-input';
   const input = document.getElementById(inputId);
   if (!input || !input.value.trim()) return;
@@ -410,109 +526,169 @@ async function sendMessage(source = 'main') {
 
   const agent = state.currentAgent;
   state.chatHistory[agent].push({ sender: 'user', text: userText });
+  state.chatHistory[agent].push({ sender: 'bot', text: '⏳ جاري التوليد الحي من نموذج الذكاء الاصطناعي...' });
   renderChat();
 
-  const reply = await fetchGeminiReply(agent, userText);
-  state.chatHistory[agent].push({ sender: 'bot', text: reply });
+  const result = await executeStrictAICall(agent, userText);
+  state.chatHistory[agent].pop();
+
+  if (result.ok) {
+    state.chatHistory[agent].push({ sender: 'bot', text: result.reply });
+  } else {
+    // إذا انقطع الاتصال أثناء الحوار يتحول الوكيل فوراً إلى أوفلاين
+    state.geminiConnected = false;
+    state.lastAiError = result.error;
+    updateAgentsOnlineOfflineUI();
+  }
+
   saveState();
   renderChat();
 }
 
-async function fetchGeminiReply(agent, userText) {
+// دالة الاتصال الصارم: إما رد حقيقي من النموذج (ok: true) أو إعلان أوفلاين صريح (ok: false)
+async function executeStrictAICall(agent, userText) {
   const profile = agentProfiles[agent];
-  const doneCount = state.certificates.reduce((acc, c) => acc + c.tasks.filter(t => t.done).length, 0);
-  const contextSummary = `الاستمرارية=${state.streak} يوم، تركيز اليوم=${state.studyMinutesToday} د، المهام المنجزة=${doneCount}، عدد ملفات المكتبة=${state.libraryFiles.length}.`;
-  const fullPrompt = `${profile.systemPrompt}\nالسياق: ${contextSummary}\nسؤال المستخدم: ${userText}`;
-  const manualKey = (state.settings?.apiKey || '').trim();
+  const doneTasks = state.certificates.flatMap(c => c.tasks.filter(t => t.done).map(t => t.text));
+  const filesSummary = state.libraryFiles.map(f => `${f.name} (${f.notes})`).join(' | ');
+  const contextSummary = `بيانات المتعلم: الاستمرارية=${state.streak} يوم، تركيز اليوم=${state.studyMinutesToday} د، المهام المتقنة=${doneTasks.join('، ') || 'في البداية'}، ملفات المكتبة=${filesSummary || 'لا يوجد'}.`;
 
-  // 1. المحاولة عبر السيرفر السحابي (/api/chat) مع إرسال مفتاح AQ أو AIza
+  const recentHistory = (state.chatHistory[agent] || [])
+    .slice(-7, -1)
+    .map(m => `${m.sender === 'user' ? 'المتعلم' : 'الوكيل'}: ${m.text}`)
+    .join('\n');
+
+  const key = (state.settings?.apiKey || '').trim();
+  if (!key) {
+    return { ok: false, error: 'لا يوجد مفتاح API محفوظ في الإعدادات.' };
+  }
+
+  // 1. إذا كان المفتاح من منصة Groq (يبدأ بـ gsk_)
+  if (key.startsWith('gsk_')) {
+    try {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${key}`
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            { role: 'system', content: `${profile.systemPrompt}\n\n${contextSummary}` },
+            { role: 'user', content: `سجل الحوار:\n${recentHistory}\n\nالرسالة: ${userText}` }
+          ],
+          temperature: 0.7
+        })
+      });
+      const data = await res.json();
+      if (data?.choices?.[0]?.message?.content) {
+        state.geminiConnected = true;
+        state.aiProviderName = 'Groq Llama-3.3-70B';
+        return { ok: true, reply: data.choices[0].message.content };
+      }
+      return { ok: false, error: `رفض سيرفر Groq المفتاح: ${data?.error?.message || 'Unknown error'}` };
+    } catch (e) {
+      return { ok: false, error: `تعذر الوصول لسيرفر Groq: ${e.message}` };
+    }
+  }
+
+  // 2. إذا كان المفتاح من OpenAI (يبدأ بـ sk-)
+  if (key.startsWith('sk-')) {
+    try {
+      const res = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${key}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            { role: 'system', content: `${profile.systemPrompt}\n\n${contextSummary}` },
+            { role: 'user', content: `سجل الحوار:\n${recentHistory}\n\nالرسالة: ${userText}` }
+          ]
+        })
+      });
+      const data = await res.json();
+      if (data?.choices?.[0]?.message?.content) {
+        state.geminiConnected = true;
+        state.aiProviderName = 'OpenAI GPT-4o';
+        return { ok: true, reply: data.choices[0].message.content };
+      }
+      return { ok: false, error: `رفض سيرفر OpenAI المفتاح: ${data?.error?.message || 'Invalid Key'}` };
+    } catch (e) {
+      return { ok: false, error: `خطأ اتصال بـ OpenAI: ${e.message}` };
+    }
+  }
+
+  // 3. فحص الاتصال عبر سيرفر الموقع (/api/chat) أولاً ثم الاتصال المباشر بـ Google Gemini
   try {
-    const res = await fetch('/api/chat', {
+    const serverRes = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         systemPrompt: profile.systemPrompt,
-        contextSummary,
+        contextSummary: `${contextSummary}\n${recentHistory}`,
         userText,
-        clientKey: manualKey
+        clientKey: key
       })
     });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.reply) {
+    if (serverRes.ok) {
+      const serverData = await serverRes.json();
+      if (serverData && serverData.reply) {
         state.geminiConnected = true;
-        updateGeminiBadgesUI();
-        return data.reply;
+        state.aiProviderName = 'Google Gemini (Server)';
+        return { ok: true, reply: serverData.reply };
       }
     }
   } catch (e) {}
 
-  // 2. محاولة الاتصال المباشر بأي صيغة مفتاح (AQ.Ab8 أو AIzaSy) بدون أي قيود
-  if (manualKey.length > 6) {
-    const directAttempts = [
-      {
-        url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(manualKey)}`,
-        headers: { 'Content-Type': 'application/json' }
-      },
-      {
-        url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`,
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': manualKey }
-      },
-      {
-        url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`,
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${manualKey}` }
+  // 4. الاتصال المباشر بسيرفر Google Gemini
+  const geminiModels = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.5-flash'];
+  let lastGoogleErr = '';
+
+  for (const modelName of geminiModels) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(key)}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ text: `${profile.systemPrompt}\n\n${contextSummary}\n\n${recentHistory}\n\nسؤال المتعلم: ${userText}` }]
+          }]
+        })
+      });
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (text) {
+        state.geminiConnected = true;
+        state.aiProviderName = `Google ${modelName}`;
+        return { ok: true, reply: text };
       }
-    ];
-
-    for (const attempt of directAttempts) {
-      try {
-        const res = await fetch(attempt.url, {
-          method: 'POST',
-          headers: attempt.headers,
-          body: JSON.stringify({ contents: [{ parts: [{ text: fullPrompt }] }] })
-        });
-        const data = await res.json();
-        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (text) {
-          state.geminiConnected = true;
-          updateGeminiBadgesUI();
-          return text;
-        }
-      } catch (e) {}
+      if (data?.error?.message) {
+        lastGoogleErr = data.error.message;
+      }
+    } catch (e) {
+      lastGoogleErr = e.message;
     }
   }
 
-  // 3. المحرك الذكي المدمج (يعمل تلقائياً وبدون أي أخطاء)
-  state.geminiConnected = true;
-  updateGeminiBadgesUI();
-  return generateCleanFallbackReply(agent, userText);
+  // إذا وصلنا هنا يعني أن المفتاح لم ينجح مع أي نموذج حقيقي -> أوفلاين صريح
+  if (key.startsWith('AQ.') || key.startsWith('aq.')) {
+    return {
+      ok: false,
+      error: `مفتاح (${key.slice(0, 6)}...) مرفوض من Google Gemini API المباشر (${lastGoogleErr || 'API key not valid'}). لتشغيل الوكلاء أونلاين فوراً، استخرج مفتاحاً مجانياً يبدأ بـ (gsk_) من موقع console.groq.com/keys أو مفتاح Gemini قياسي يبدأ بـ (AIzaSy).`
+    };
+  }
+
+  return {
+    ok: false,
+    error: `رفض سيرفر الذكاء الاصطناعي المفتاح المدخل (${lastGoogleErr || 'Invalid API Key'}).`
+  };
 }
 
-function generateCleanFallbackReply(agent, userText) {
-  const lower = userText.toLowerCase();
-
-  if (agent === 'abdulmalik') {
-    if (lower.includes('api') || lower.includes('ربط')) {
-      return `🛠️ شرح هندسي لربط واجهة Gemini API:\n1. يتم إرسال الطلب بصيغة JSON عبر دالة fetch إلى نقطة النهاية (Endpoint).\n2. يوضع مفتاح المصادقة (سواء بصيغة AQ أو AIza) في الترويسة (Header) لضمان الأمان.\n3. يستقبل التطبيق الرد النصي ويعرضه في صندوق المحادثة مباشرة.`;
-    }
-    if (lower.includes('supabase') || lower.includes('قواعد البيانات') || lower.includes('localstorage')) {
-      return `🛠️ الفرق الهندسي بين LocalStorage و Supabase:\n• LocalStorage: ذاكرة محلية سريعة داخل متصفح جهازك الحالي فقط.\n• Supabase: قاعدة بيانات سحابية (PostgreSQL) تحفظ بياناتك وملفاتك على الإنترنت لتفتحها من أي جوال أو كمبيوتر في أي وقت.`;
-    }
-    return `🛠️ إجابة تقنية حول "${userText}":\nبصفتي مهندس النظم، أنصح دائماً بتقسيم الكود إلى وحدات مستقلة (HTML للهيكل، CSS للتصميم، و JS للمنطق البرمجي) لضمان سهولة الصيانة وعدم تعطل الدوال. كيف يمكنني مساعدتك برمجياً في هذه النقطة؟`;
-  }
-
-  if (agent === 'hazem') {
-    const doneCount = state.certificates.reduce((acc, c) => acc + c.tasks.filter(t => t.done).length, 0);
-    return `📊 قراءة الأداء الحالية:\n• الاستمرارية: ${state.streak} يوم\n• زمن التركيز اليوم: ${state.studyMinutesToday} دقيقة\n• المحاور المنجزة: ${doneCount}\n• ملفات المكتبة: ${state.libraryFiles.length} ملفات.\nتوصيتي: حافظ على جلسة الـ 45 دقيقة اليومية وسجل أهم ملاحظاتك في المكتبة.`;
-  }
-
-  if (lower.includes('power query') || lower.includes('dax')) {
-    return `💡 الفرق العملي ببساطة:\n• Power Query: هو أداة "تنظيف وتجهيز البيانات" قبل الدخول للتحليل (مثل إزالة التكرار ودمج الجداول).\n• لغة DAX: هي لغة "المعادلات والحسابات الذكية" التي تكتبها لحساب المؤشرات المالية ومقارنات الأداء.`;
-  }
-  return `💡 بخصوص "${userText}": الفكرة الأساسية في إتقان هذا المحور هي التطبيق العملي المباشر وتدوين الملاحظات في مكتبتك الخاصة. هل تحب أن نأخذ مثالاً تطبيقياً أو سؤالاً استنتاجياً عليه؟`;
-}
-
-// ==================== 5. فحص مفتاح Gemini (يقبل AQ و AIza فوراً) + وضع المطور ====================
+// ==================== 5. فحص الاتصال الصارم في الإعدادات + وضع المطور ====================
 function toggleKeyVisibility() {
   const input = document.getElementById('api-key-input');
   if (!input) return;
@@ -525,53 +701,43 @@ async function saveAndVerifyGeminiKey() {
   const key = (input?.value || '').trim();
 
   state.settings.apiKey = key;
-  state.geminiConnected = true;
-  saveState();
+
+  if (!key) {
+    state.geminiConnected = false;
+    state.aiProviderName = 'Offline';
+    state.lastAiError = 'لم يتم إدخال مفتاح API.';
+    saveState();
+    if (resultEl) {
+      resultEl.style.color = '#ef4444';
+      resultEl.innerHTML = '🔴 <strong>الوكلاء في وضع أوفلاين (Offline):</strong> الخانة فارغة، يرجى إدخال مفتاح API فعال.';
+    }
+    return;
+  }
 
   if (resultEl) {
     resultEl.style.color = '#93c5fd';
-    resultEl.textContent = '⏳ جاري حفظ المفتاح وتفعيل الربط مع Gemini...';
+    resultEl.textContent = '⏳ جاري إرسال نبضة اختبار حقيقية لسيرفر الذكاء الاصطناعي...';
   }
 
-  let liveCloud = false;
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        systemPrompt: 'أجب بكلمة متصل',
-        contextSummary: '',
-        userText: 'فحص',
-        clientKey: key
-      })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.reply) liveCloud = true;
-    }
-  } catch (e) {}
+  const check = await executeStrictAICall('fahad', 'أجب بكلمة واحدة فقط: متصل');
 
-  if (resultEl) {
-    resultEl.style.color = '#10b981';
-    if (liveCloud) {
-      resultEl.textContent = '✅ تم قبول المفتاح والاتصال الفعلي المباشر بـ Gemini API بنجاح 100%!';
-    } else if (key.length > 0) {
-      resultEl.textContent = '✅ تم قبول وحفظ مفتاحك (' + key.slice(0, 6) + '...) وتفعيل الوكلاء الثلاثة بنجاح!';
-    } else {
-      resultEl.textContent = '✅ تم التفعيل بنجاح (وضع التشغيل الذكي التلقائي)!';
+  if (check.ok) {
+    state.geminiConnected = true;
+    state.lastAiError = '';
+    saveState();
+    if (resultEl) {
+      resultEl.style.color = '#10b981';
+      resultEl.innerHTML = `🟢 <strong>الوكلاء الآن أونلاين (Online)!</strong><br>تم الاتصال الفعلي بنموذج: <strong>${state.aiProviderName}</strong><br>رد النموذج المباشر: "${check.reply}"`;
     }
-  }
-}
-
-function updateGeminiBadgesUI() {
-  const headerDot = document.getElementById('gemini-header-status');
-  const settingsBadge = document.getElementById('gemini-status-badge');
-  if (state.geminiConnected || (state.settings?.apiKey && state.settings.apiKey.length > 5)) {
-    if (headerDot) headerDot.innerHTML = '🟢 Gemini: متصل ومفعل';
-    if (settingsBadge) settingsBadge.textContent = '🟢 متصل ومفعل';
   } else {
-    if (headerDot) headerDot.innerHTML = '⚪ Gemini: جاهز للتفعيل';
-    if (settingsBadge) settingsBadge.textContent = '⚪ جاهز للتفعيل';
+    state.geminiConnected = false;
+    state.aiProviderName = 'Offline';
+    state.lastAiError = check.error;
+    saveState();
+    if (resultEl) {
+      resultEl.style.color = '#ef4444';
+      resultEl.innerHTML = `🔴 <strong>فشل الاتصال — الوكلاء الآن في وضع أوفلاين (Offline)</strong><br>السبب التقني: ${check.error}`;
+    }
   }
 }
 
@@ -592,26 +758,27 @@ function runFullSiteDiagnostics() {
 
   const viewsOk = ['view-home', 'view-library', 'view-chat', 'view-settings'].every(id => !!document.getElementById(id));
   const storageSize = (JSON.stringify(state).length / 1024).toFixed(2);
-  const hasKey = state.settings?.apiKey ? `✅ محفوظ (${state.settings.apiKey.slice(0, 6)}...)` : '✅ يعمل بالوضع التلقائي';
+  const agentsStateText = state.geminiConnected
+    ? `<span style="color:#10b981;">🟢 أونلاين — متصلون فعلياً بنموذج (${state.aiProviderName})</span>`
+    : `<span style="color:#ef4444;">🔴 أوفلاين (Offline) — ${state.lastAiError}</span>`;
 
   out.innerHTML = `
-    <p><strong>🩺 تقرير الفحص الهندسي الشامل للمنصة:</strong></p>
+    <p><strong>🩺 تقرير الفحص الهندسي الصارم للمنصة:</strong></p>
     <ul style="margin:8px 18px; line-height:1.8;">
-      <li><strong>سلامة الصفحات المستقلة (4 صفحات):</strong> ${viewsOk ? '✅ جميع الصفحات تعمل بنجاح' : '❌ يوجد نقص'}</li>
-      <li><strong>الذاكرة المحلية (LocalStorage):</strong> ✅ نشطة (${storageSize} KB مستخدم)</li>
-      <li><strong>مكتبة الملفات والملاحظات:</strong> ✅ جاهزة (${state.libraryFiles.length} ملفات محفوظة)</li>
-      <li><strong>نافذة المحادثة المنبثقة (Popup Chat):</strong> ✅ مفعلة وجاهزة</li>
-      <li><strong>حالة المهندس عبدالملك:</strong> ✅ وضع الاستشارة البرمجية النقي (تم إيقاف الاقتراحات التلقائية 100%)</li>
-      <li><strong>حالة مفتاح Gemini API:</strong> ${hasKey}</li>
+      <li><strong>سلامة الصفحات المستقلة (4 صفحات):</strong> ${viewsOk ? '✅ تعمل بالكامل' : '❌ يوجد نقص'}</li>
+      <li><strong>الذاكرة المحلية (LocalStorage):</strong> ✅ نشطة (${storageSize} KB)</li>
+      <li><strong>مكتبة الملفات والملاحظات:</strong> ✅ جاهزة (${state.libraryFiles.length} ملفات)</li>
+      <li><strong>الردود الوهمية/المبرمجة مسبقاً:</strong> 🚫 معطلة نهائياً (Strict Real-AI Only)</li>
+      <li><strong>حالة الوكلاء الثلاثة (فهد، حازم، عبدالملك):</strong> ${agentsStateText}</li>
     </ul>
   `;
 }
 
 function clearChatHistory() {
-  state.chatHistory = structuredClone(defaultState.chatHistory);
+  state.chatHistory = { fahad: [], hazem: [], abdulmalik: [] };
   saveState();
   renderChat();
-  alert('تم مسح سجل المحادثات وإعادته للوضع الابتدائي النظيف.');
+  alert('تم مسح سجل المحادثات بالكامل.');
 }
 
 // ==================== 6. المؤقت والاختبارات والتقارير ====================
@@ -801,6 +968,7 @@ function importBackup(event) {
 }
 
 function startVoiceInput(targetInputId) {
+  if (!state.geminiConnected) return alert('🔴 الوكلاء في وضع أوفلاين حالياً.');
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) return alert('متصفحك لا يدعم الإدخال الصوتي.');
   const recognition = new SpeechRecognition();
@@ -812,7 +980,8 @@ function startVoiceInput(targetInputId) {
   recognition.start();
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+// عند تحميل الصفحة: نفحص تلقائياً هل المفتاح المحفوظ يتصل بنموذج حقيقي أم نعلن أوفلاين
+window.addEventListener('DOMContentLoaded', async () => {
   if (document.getElementById('api-key-input')) {
     document.getElementById('api-key-input').value = state.settings?.apiKey || '';
   }
@@ -824,4 +993,12 @@ window.addEventListener('DOMContentLoaded', () => {
   }
   renderAll();
   loadQuizQuestion();
+
+  // فحص تلقائي صامت عند فتح الموقع إذا كان هناك مفتاح محفوظ
+  if (state.settings?.apiKey && state.settings.apiKey.length > 5) {
+    const check = await executeStrictAICall('fahad', 'أجب بكلمة: متصل');
+    state.geminiConnected = check.ok;
+    if (!check.ok) state.lastAiError = check.error;
+    renderAll();
+  }
 });
