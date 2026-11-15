@@ -644,7 +644,7 @@ async function executeStrictAICall(agent, userText) {
   } catch (e) {}
 
   // 4. الاتصال المباشر بسيرفر Google Gemini
-  const geminiModels = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.5-flash'];
+  const geminiModels = ['gemini-3.8-flash'];
   let lastGoogleErr = '';
 
   for (const modelName of geminiModels) {
